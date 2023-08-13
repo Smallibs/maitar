@@ -10,7 +10,7 @@ mod tests {
     #[test]
     fn it_works() {
         let ma = Ok(1);
-        let mb = <ResultK<String> as Monad>::bind(|a| { Ok(a + 1) }, ma);
+        let mb = <ResultK<String> as Monad>::bind(|a| Ok(a + 1), ma);
         assert_eq!(mb, Ok(2))
     }
 }

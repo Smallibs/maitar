@@ -5,4 +5,3 @@ pub trait Applicative: Functor {
 
     fn apply<A, B>(mf: Self::T<fn(A) -> B>, ma: Self::T<A>) -> Self::T<B>;
 }
-
