@@ -11,10 +11,7 @@ impl HKP for OptionK {
 
 impl Functor for OptionK {
     fn map<A, B>(f: fn(A) -> B, ma: Self::T<A>) -> Self::T<B> {
-        match ma {
-            Some(a) => Some(f(a)),
-            None => None,
-        }
+        ma.map(f)
     }
 }
 

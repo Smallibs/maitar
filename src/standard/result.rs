@@ -1,8 +1,8 @@
 use std::marker::PhantomData;
 
 use crate::core::hkp::HKP;
-use crate::specs::functor::Functor;
 use crate::specs::applicative::Applicative;
+use crate::specs::functor::Functor;
 use crate::specs::monad::Monad;
 
 pub struct ResultK<E> {
@@ -15,10 +15,7 @@ impl<E> HKP for ResultK<E> {
 
 impl<E> Functor for ResultK<E> {
     fn map<A, B>(f: fn(A) -> B, ma: Self::T<A>) -> Self::T<B> {
-        match ma {
-            Ok(a) => Ok(f(a)),
-            Err(e) => Err(e),
-        }
+        ma.map(f)
     }
 }
 
