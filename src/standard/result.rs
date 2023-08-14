@@ -1,8 +1,9 @@
-use crate::specs::applicative::Applicative;
-use crate::specs::functor::Functor;
-use crate::specs::hkp::HKP;
-use crate::specs::monad::Monad;
 use std::marker::PhantomData;
+
+use crate::core::hkp::HKP;
+use crate::specs::functor::Functor;
+use crate::specs::applicative::Applicative;
+use crate::specs::monad::Monad;
 
 pub struct ResultK<E> {
     _ignore: PhantomData<E>,

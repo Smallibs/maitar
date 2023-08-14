@@ -1,6 +1,6 @@
+use crate::core::hkp::HKP;
 use crate::specs::applicative::Applicative;
 use crate::specs::functor::Functor;
-use crate::specs::hkp::HKP;
 use crate::specs::monad::Monad;
 
 pub struct OptionK;
