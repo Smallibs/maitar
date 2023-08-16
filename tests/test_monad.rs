@@ -59,7 +59,7 @@ mod tests_bind {
 
 
     fn test_bind<This: Monad>(ma: This::T<i32>) -> This::T<i32> {
-        This::bind(|a| This::returns(a + 1), ma)
+        This::bind(ma, |a| This::returns(a + 1))
     }
 
     #[test]
