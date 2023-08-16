@@ -1,5 +1,6 @@
 use crate::core::hkp::HKP;
 use crate::specs::applicative::Applicative;
+use crate::specs::bind::Bind;
 use crate::specs::functor::Functor;
 use crate::specs::monad::Monad;
 
@@ -22,13 +23,13 @@ impl Applicative for OptionK {
 
     fn apply<A, B>(mf: Self::T<fn(A) -> B>, ma: Self::T<A>) -> Self::T<B> {
         match mf {
-            Some(f) => OptionK::map(f, ma),
+            Some(f) => Self::map(f, ma),
             None => None,
         }
     }
 }
 
-impl Monad for OptionK {
+impl Bind for OptionK {
     fn join<A>(mma: Self::T<Self::T<A>>) -> Self::T<A> {
         match mma {
             Some(ma) => ma,
@@ -36,3 +37,5 @@ impl Monad for OptionK {
         }
     }
 }
+
+impl Monad for OptionK {}

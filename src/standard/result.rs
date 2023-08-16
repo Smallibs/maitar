@@ -2,6 +2,7 @@ use std::marker::PhantomData;
 
 use crate::core::hkp::HKP;
 use crate::specs::applicative::Applicative;
+use crate::specs::bind::Bind;
 use crate::specs::functor::Functor;
 use crate::specs::monad::Monad;
 
@@ -26,13 +27,13 @@ impl<E> Applicative for ResultK<E> {
 
     fn apply<A, B>(mf: Self::T<fn(A) -> B>, ma: Self::T<A>) -> Self::T<B> {
         match mf {
-            Ok(f) => ResultK::map(f, ma),
+            Ok(f) => Self::map(f, ma),
             Err(e) => Err(e),
         }
     }
 }
 
-impl<E> Monad for ResultK<E> {
+impl<E> Bind for ResultK<E> {
     fn join<A>(mma: Self::T<Self::T<A>>) -> Self::T<A> {
         match mma {
             Ok(ma) => ma,
@@ -40,3 +41,5 @@ impl<E> Monad for ResultK<E> {
         }
     }
 }
+
+impl<E> Monad for ResultK<E> {}

@@ -1,13 +1,7 @@
-use crate::specs::applicative::Applicative;
+use crate::specs::bind::Bind;
 
-pub trait Monad: Applicative {
+pub trait Monad: Bind {
     fn returns<A>(a: A) -> Self::T<A> {
         Self::pure(a)
-    }
-
-    fn join<A>(mma: Self::T<Self::T<A>>) -> Self::T<A>;
-
-    fn bind<A, B>(mf: fn(A) -> Self::T<B>, ma: Self::T<A>) -> Self::T<B> {
-        Self::join(Self::map(mf, ma))
     }
 }
