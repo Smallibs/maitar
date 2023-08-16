@@ -8,13 +8,15 @@ pub trait Applicative: Functor {
 
 pub mod infix {
     use crate::core::hkp::HKP;
+    use crate::specs::applicative::Applicative as Api;
 
-    pub trait Applicative<A, This: HKP> {
-        type T<B>: Applicative<B, This>;
+    pub trait Applicative<A> {
+        type This: Api;
+        type T<B>: Applicative<B>;
 
-        fn from<B>(a: <This as HKP>::T<B>) -> Self::T<B>;
+        fn from<B>(a: <Self::This as HKP>::T<B>) -> Self::T<B>;
 
-        fn to(self) -> <This as HKP>::T<A>;
+        fn to(self) -> <Self::This as HKP>::T<A>;
 
         fn apply<B>(self, mf: Self::T<fn(A) -> B>) -> Self::T<B>;
     }

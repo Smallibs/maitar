@@ -42,12 +42,12 @@ impl Monad for OptionK {}
 
 pub mod infix {
     use crate::core::hkp::HKP;
-    use crate::specs::applicative::Applicative;
     use crate::specs::applicative::infix::Applicative as InfixApplicative;
-    use crate::specs::bind::Bind;
+    use crate::specs::applicative::Applicative;
     use crate::specs::bind::infix::Bind as InfixBind;
-    use crate::specs::functor::Functor;
+    use crate::specs::bind::Bind;
     use crate::specs::functor::infix::Functor as InfixFunctor;
+    use crate::specs::functor::Functor;
     use crate::standard::option::OptionK;
 
     impl<A> InfixFunctor<A> for Option<A> {
@@ -58,14 +58,15 @@ pub mod infix {
         }
     }
 
-    impl<A> InfixApplicative<A, OptionK> for Option<A> {
+    impl<A> InfixApplicative<A> for Option<A> {
+        type This = OptionK;
         type T<B> = Option<B>;
 
-        fn from<B>(a: <OptionK as HKP>::T<B>) -> Self::T<B> {
+        fn from<B>(a: <Self::This as HKP>::T<B>) -> Self::T<B> {
             a
         }
 
-        fn to(self) -> <OptionK as HKP>::T<A> {
+        fn to(self) -> <Self::This as HKP>::T<A> {
             self
         }
 
@@ -74,11 +75,16 @@ pub mod infix {
         }
     }
 
-    impl<A> InfixBind<A, OptionK> for Option<A> {
+    impl<A> InfixBind<A> for Option<A> {
+        type This = OptionK;
         type T<B> = Option<B>;
 
-        fn this<B>(a: <OptionK as HKP>::T<B>) -> Self::T<B> {
+        fn from<B>(a: <Self::This as HKP>::T<B>) -> Self::T<B> {
             a
+        }
+
+        fn to(self) -> <Self::This as HKP>::T<A> {
+            self
         }
 
         fn bind<B>(self, mf: fn(A) -> Self::T<B>) -> Self::T<B> {

@@ -10,11 +10,15 @@ pub trait Bind: Applicative {
 
 pub mod infix {
     use crate::core::hkp::HKP;
+    use crate::specs::bind::Bind as Api;
 
-    pub trait Bind<A, This: HKP> {
-        type T<B>: Bind<B, This>;
+    pub trait Bind<A> {
+        type This: Api;
+        type T<B>: Bind<B>;
 
-        fn this<B>(a: <This as HKP>::T<B>) -> Self::T<B>;
+        fn from<B>(a: <Self::This as HKP>::T<B>) -> Self::T<B>;
+
+        fn to(self) -> <Self::This as HKP>::T<A>;
 
         fn bind<B>(self, mf: fn(A) -> Self::T<B>) -> Self::T<B>;
     }

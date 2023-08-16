@@ -53,17 +53,14 @@ mod tests_apply {
 
     mod infix {
         mod tests_apply {
-            use maitar::core::hkp::HKP;
-            use maitar::specs::applicative::Applicative as Api;
             use maitar::specs::applicative::infix::Applicative;
-            use maitar::standard::option::OptionK;
-            use maitar::standard::result::ResultK;
+            use maitar::specs::applicative::Applicative as Api;
 
-            fn test_apply<Mod: Api, Infix: Applicative<i32, Mod>>(ma: Infix) -> Infix::T<i32> {
-                ma.apply(Infix::from(Mod::pure(|i| i + 1)))
+            fn test_apply<Infix: Applicative<i32>>(ma: Infix) -> Infix::T<i32> {
+                ma.apply(Infix::from(Infix::This::pure(|i| i + 1)))
             }
 
-            fn test_apply_with_f<Mod: HKP, Infix: Applicative<i32, Mod>>(
+            fn test_apply_with_f<Infix: Applicative<i32>>(
                 f: Infix::T<fn(i32) -> i32>,
                 ma: Infix,
             ) -> Infix::T<i32> {
@@ -73,37 +70,37 @@ mod tests_apply {
             #[test]
             fn apply_option_some() {
                 type This = Option<i32>;
-                assert_eq!(test_apply::<OptionK, This>(Some(1)), Some(2))
+                assert_eq!(test_apply::<This>(Some(1)), Some(2))
             }
 
             #[test]
             fn apply_option_none() {
                 type This = Option<i32>;
-                assert_eq!(test_apply::<OptionK, This>(None), None)
+                assert_eq!(test_apply::<This>(None), None)
             }
 
             #[test]
             fn apply_option_some_with_f() {
                 type This = Option<i32>;
-                assert_eq!(test_apply_with_f::<OptionK, This>(None, Some(1)), None)
+                assert_eq!(test_apply_with_f::<This>(None, Some(1)), None)
             }
 
             #[test]
             fn apply_result_ok() {
                 type This = Result<i32, &'static str>;
-                assert_eq!(test_apply::<ResultK<&'static str>, This>(Ok(1)), Ok(2))
+                assert_eq!(test_apply::<This>(Ok(1)), Ok(2))
             }
 
             #[test]
             fn apply_result_ok_with_f() {
                 type This = Result<i32, &'static str>;
-                assert_eq!(test_apply_with_f::<ResultK<&'static str>, This>(Err(""), Ok(1)), Err(""))
+                assert_eq!(test_apply_with_f::<This>(Err(""), Ok(1)), Err(""))
             }
 
             #[test]
             fn apply_result_err() {
                 type This = Result<i32, &'static str>;
-                assert_eq!(test_apply::<ResultK<&'static str>, This>(Err("Error")), Err("Error"))
+                assert_eq!(test_apply::<This>(Err("Error")), Err("Error"))
             }
         }
     }

@@ -46,12 +46,12 @@ impl<E> Monad for ResultK<E> {}
 
 mod infix {
     use crate::core::hkp::HKP;
-    use crate::specs::applicative::Applicative;
     use crate::specs::applicative::infix::Applicative as InfixApplicative;
-    use crate::specs::bind::Bind;
+    use crate::specs::applicative::Applicative;
     use crate::specs::bind::infix::Bind as InfixBind;
-    use crate::specs::functor::Functor;
+    use crate::specs::bind::Bind;
     use crate::specs::functor::infix::Functor as InfixFunctor;
+    use crate::specs::functor::Functor;
     use crate::standard::result::ResultK;
 
     impl<A, E> InfixFunctor<A> for Result<A, E> {
@@ -62,14 +62,15 @@ mod infix {
         }
     }
 
-    impl<A, E> InfixApplicative<A, ResultK<E>> for Result<A, E> {
+    impl<A, E> InfixApplicative<A> for Result<A, E> {
+        type This = ResultK<E>;
         type T<B> = Result<B, E>;
 
-        fn from<B>(a: <ResultK<E> as HKP>::T<B>) -> Self::T<B> {
+        fn from<B>(a: <Self::This as HKP>::T<B>) -> Self::T<B> {
             a
         }
 
-        fn to(self) -> <ResultK<E> as HKP>::T<A> {
+        fn to(self) -> <Self::This as HKP>::T<A> {
             self
         }
 
@@ -78,11 +79,16 @@ mod infix {
         }
     }
 
-    impl<A, E> InfixBind<A, ResultK<E>> for Result<A, E> {
+    impl<A, E> InfixBind<A> for Result<A, E> {
+        type This = ResultK<E>;
         type T<B> = Result<B, E>;
 
-        fn this<B>(a: <ResultK<E> as HKP>::T<B>) -> Self::T<B> {
+        fn from<B>(a: <Self::This as HKP>::T<B>) -> Self::T<B> {
             a
+        }
+
+        fn to(self) -> <Self::This as HKP>::T<A> {
+            self
         }
 
         fn bind<B>(self, mf: fn(A) -> Self::T<B>) -> Self::T<B> {
