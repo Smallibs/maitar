@@ -1,8 +1,8 @@
 #[cfg(test)]
 mod tests_apply {
-    use rustine::specs::applicative::Applicative;
-    use rustine::standard::option::OptionK;
-    use rustine::standard::result::ResultK;
+    use maitar::specs::applicative::Applicative;
+    use maitar::standard::option::OptionK;
+    use maitar::standard::result::ResultK;
 
     fn test_apply<This: Applicative>(ma: This::T<i32>) -> This::T<i32> {
         This::apply(This::pure(|i| i + 1), ma)

@@ -1,5 +1,5 @@
 [package]
-name = "rustine"
+name = "maitar"
 version = "0.1.0"
 edition = "2021"
 

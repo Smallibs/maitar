@@ -1,8 +1,8 @@
 #[cfg(test)]
 mod tests_map {
-    use rustine::specs::functor::Functor;
-    use rustine::standard::option::OptionK;
-    use rustine::standard::result::ResultK;
+    use maitar::specs::functor::Functor;
+    use maitar::standard::option::OptionK;
+    use maitar::standard::result::ResultK;
 
     fn test_map<This: Functor>(ma: This::T<i32>) -> This::T<i32> {
         This::map(|a| a + 1, ma)

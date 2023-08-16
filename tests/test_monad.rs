@@ -1,8 +1,8 @@
 #[cfg(test)]
 mod tests_join {
-    use rustine::specs::monad::Monad;
-    use rustine::standard::option::OptionK;
-    use rustine::standard::result::ResultK;
+    use maitar::specs::monad::Monad;
+    use maitar::standard::option::OptionK;
+    use maitar::standard::result::ResultK;
 
     fn test_join<This: Monad>(mma: This::T<This::T<i32>>) -> This::T<i32> {
         This::join(mma)
@@ -53,9 +53,9 @@ mod tests_join {
 
 #[cfg(test)]
 mod tests_bind {
-    use rustine::specs::monad::Monad;
-    use rustine::standard::option::OptionK;
-    use rustine::standard::result::ResultK;
+    use maitar::specs::monad::Monad;
+    use maitar::standard::option::OptionK;
+    use maitar::standard::result::ResultK;
 
 
     fn test_bind<This: Monad>(ma: This::T<i32>) -> This::T<i32> {
