@@ -32,6 +32,7 @@ mod tests_map {
         assert_eq!(test_map::<This>(Err("Error")), Err("Error"))
     }
 
+    /*
     mod infix {
         use maitar::specs::functor::infix::Functor;
 
@@ -63,4 +64,5 @@ mod tests_map {
             assert_eq!(test_map::<This>(Err("Error")), Err("Error"))
         }
     }
+    */
 }

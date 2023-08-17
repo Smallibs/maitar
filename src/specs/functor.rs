@@ -1,13 +1,25 @@
 use crate::core::hkp::HKP;
 
 pub trait Functor: HKP {
-    fn map<A, B>(f: fn(A) -> B, ma: Self::T<A>) -> Self::T<B>;
+    fn map<A, B, MAP>(f: MAP, ma: Self::T<A>) -> Self::T<B>
+    where
+        MAP: Fn(A) -> B;
 }
 
 pub mod infix {
-    pub trait Functor<A> {
-        type T<B>: Functor<B>;
+    use crate::specs::functor::Functor as Api;
+    use crate::specs::infix::Transform;
 
-        fn map<B>(self, f: fn(A) -> B) -> Self::T<B>;
+    pub trait Functor<A>: Transform<A, T<A> = Self::TL<A>, This = Self::ThisL> {
+        type ThisL: Api;
+        type TL<B>: Functor<B>;
+
+        fn map<B, MAP>(self, f: MAP) -> Self::T<B>
+        where
+            MAP: Fn(A) -> B,
+            Self: Sized,
+        {
+            Self::from_hkp(Self::This::map(f, self.to_hkp()))
+        }
     }
 }

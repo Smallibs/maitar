@@ -15,7 +15,10 @@ impl<E> HKP for ResultK<E> {
 }
 
 impl<E> Functor for ResultK<E> {
-    fn map<A, B>(f: fn(A) -> B, ma: Self::T<A>) -> Self::T<B> {
+    fn map<A, B, MAP>(f: MAP, ma: Self::T<A>) -> Self::T<B>
+    where
+        MAP: Fn(A) -> B,
+    {
         ma.map(f)
     }
 }
@@ -25,7 +28,10 @@ impl<E> Applicative for ResultK<E> {
         Ok(a)
     }
 
-    fn apply<A, B>(mf: Self::T<fn(A) -> B>, ma: Self::T<A>) -> Self::T<B> {
+    fn apply<A, B, MAP>(mf: Self::T<MAP>, ma: Self::T<A>) -> Self::T<B>
+    where
+        MAP: Fn(A) -> B,
+    {
         match mf {
             Ok(f) => Self::map(f, ma),
             Err(e) => Err(e),
@@ -46,53 +52,47 @@ impl<E> Monad for ResultK<E> {}
 
 mod infix {
     use crate::core::hkp::HKP;
-    use crate::specs::applicative::infix::Applicative as InfixApplicative;
-    use crate::specs::applicative::Applicative;
-    use crate::specs::bind::infix::Bind as InfixBind;
-    use crate::specs::bind::Bind;
-    use crate::specs::functor::infix::Functor as InfixFunctor;
-    use crate::specs::functor::Functor;
+    use crate::specs::applicative::infix::Applicative;
+    use crate::specs::bind::infix::Bind;
+    use crate::specs::functor::infix::Functor;
+    use crate::specs::infix::Transform;
+    use crate::specs::monad::infix::Monad;
     use crate::standard::result::ResultK;
 
-    impl<A, E> InfixFunctor<A> for Result<A, E> {
-        type T<B> = Result<B, E>;
-
-        fn map<B>(self, f: fn(A) -> B) -> Self::T<B> {
-            <ResultK<E>>::map(f, self)
-        }
-    }
-
-    impl<A, E> InfixApplicative<A> for Result<A, E> {
+    impl<A, E> Transform<A> for Result<A, E> {
         type This = ResultK<E>;
         type T<B> = Result<B, E>;
 
-        fn from<B>(a: <Self::This as HKP>::T<B>) -> Self::T<B> {
+        fn from_hkp<B>(a: <Self::This as HKP>::T<B>) -> Self::T<B> {
             a
         }
 
-        fn to(self) -> <Self::This as HKP>::T<A> {
-            self
+        fn from_self<B>(a: Self::T<B>) -> <Self::This as HKP>::T<B> {
+            a
         }
 
-        fn apply<B>(self, mf: Self::T<fn(A) -> B>) -> Self::T<B> {
-            <ResultK<E>>::apply(mf, self)
+        fn to_hkp(self) -> <Self::This as HKP>::T<A> {
+            self
         }
     }
 
-    impl<A, E> InfixBind<A> for Result<A, E> {
-        type This = ResultK<E>;
-        type T<B> = Result<B, E>;
+    impl<A, E> Functor<A> for Result<A, E> {
+        type ThisL = ResultK<E>;
+        type TL<B> = Result<B, E>;
+    }
 
-        fn from<B>(a: <Self::This as HKP>::T<B>) -> Self::T<B> {
-            a
-        }
+    impl<A, E> Applicative<A> for Result<A, E> {
+        type ThisL = ResultK<E>;
+        type TL<B> = Result<B, E>;
+    }
 
-        fn to(self) -> <Self::This as HKP>::T<A> {
-            self
-        }
+    impl<A, E> Bind<A> for Result<A, E> {
+        type ThisL = ResultK<E>;
+        type TL<B> = Result<B, E>;
+    }
 
-        fn bind<B>(self, mf: fn(A) -> Self::T<B>) -> Self::T<B> {
-            <ResultK<E>>::bind(self, mf)
-        }
+    impl<A, E> Monad<A> for Result<A, E> {
+        type ThisL = ResultK<E>;
+        type TL<B> = Result<B, E>;
     }
 }

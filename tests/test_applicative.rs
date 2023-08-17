@@ -54,17 +54,16 @@ mod tests_apply {
     mod infix {
         mod tests_apply {
             use maitar::specs::applicative::infix::Applicative;
-            use maitar::specs::applicative::Applicative as Api;
 
             fn test_apply<Infix: Applicative<i32>>(ma: Infix) -> Infix::T<i32> {
-                ma.apply(Infix::from(Infix::This::pure(|i| i + 1)))
+                ma.apply::<i32, fn(i32) -> i32>(Infix::pure::<fn(i32) -> i32>(|i| i + 1))
             }
 
             fn test_apply_with_f<Infix: Applicative<i32>>(
                 f: Infix::T<fn(i32) -> i32>,
                 ma: Infix,
             ) -> Infix::T<i32> {
-                ma.apply(f)
+                ma.apply::<i32, fn(i32) -> i32>(f)
             }
 
             #[test]
