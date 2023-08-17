@@ -32,12 +32,11 @@ mod tests_map {
         assert_eq!(test_map::<This>(Err("Error")), Err("Error"))
     }
 
-    /*
     mod infix {
         use maitar::specs::functor::infix::Functor;
 
-        fn test_map<This: Functor<i32>>(ma: This) -> This::T<i32> {
-            ma.map(|a| a + 1)
+        fn test_map<This: Functor<i32, TL<i32> = This>>(ma: This) -> This::T<i32> {
+            ma.map(|a| a - 1).map(|a| a + 2)
         }
 
         #[test]
@@ -64,5 +63,4 @@ mod tests_map {
             assert_eq!(test_map::<This>(Err("Error")), Err("Error"))
         }
     }
-    */
 }

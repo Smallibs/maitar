@@ -55,19 +55,20 @@ mod tests_apply {
         mod tests_apply {
             use maitar::specs::applicative::infix::Applicative;
 
-            fn test_apply_with_f<Infix: Applicative<i32, TL<i32> = Infix>>(
-                f: Infix::T<fn(i32) -> i32>,
-                g: Infix::T<fn(i32) -> i32>,
-                ma: Infix,
-            ) -> Infix::T<i32> {
-                ma.apply::<i32, fn(i32) -> i32>(f)
-                    .apply::<i32, fn(i32) -> i32>(g)
+            type Int2Int = fn(i32) -> i32;
+
+            fn test_apply_with_f<This: Applicative<i32, TL<i32> = This>>(
+                f: This::T<Int2Int>,
+                g: This::T<Int2Int>,
+                ma: This,
+            ) -> This::T<i32> {
+                ma.apply::<_, Int2Int>(f).apply::<_, Int2Int>(g)
             }
 
             fn test_apply<Infix: Applicative<i32, TL<i32> = Infix>>(ma: Infix) -> Infix::T<i32> {
                 test_apply_with_f(
-                    Infix::pure::<fn(i32) -> i32>(|i| i - 1),
-                    Infix::pure::<fn(i32) -> i32>(|i| i + 2),
+                    Infix::pure::<Int2Int>(|i| i - 1),
+                    Infix::pure::<Int2Int>(|i| i + 2),
                     ma,
                 )
             }

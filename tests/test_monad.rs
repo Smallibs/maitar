@@ -1,5 +1,5 @@
 #[cfg(test)]
-mod tests_join {
+mod tests_returns {
     use maitar::specs::monad::Monad;
     use maitar::standard::option::OptionK;
     use maitar::standard::result::ResultK;
@@ -83,5 +83,26 @@ mod tests_bind {
     fn bind_result_err() {
         type This = ResultK<&'static str>;
         assert_eq!(test_bind::<This>(Err("Error")), Err("Error"))
+    }
+
+    mod infix {
+        use maitar::specs::monad::infix::Monad;
+
+        fn test_bind_with_f<This: Monad<i32, TL<i32> = This>>(ma: This) -> This::T<i32> {
+            ma.bind::<i32, _>(move |a| This::returns(a - 1))
+                .bind::<i32, _>(move |a| This::returns(a + 2))
+        }
+
+        #[test]
+        fn apply_option_some() {
+            type This = Option<i32>;
+            assert_eq!(test_bind_with_f::<This>(Some(1)), Some(2))
+        }
+
+        #[test]
+        fn apply_result_ok() {
+            type This = Result<i32, &'static str>;
+            assert_eq!(test_bind_with_f::<This>(Ok(1)), Ok(2))
+        }
     }
 }

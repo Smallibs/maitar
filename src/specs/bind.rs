@@ -19,6 +19,12 @@ pub mod infix {
         type ThisL: Api;
         type TL<B>: Bind<B>;
 
+        fn join<B>(mma: Self::T<Self::T<B>>) -> Self::T<B> {
+            Self::from_hkp(Self::This::bind(Self::from_self(mma), |a| {
+                Self::from_self::<B>(a)
+            }))
+        }
+
         fn bind<B, BIND>(self, mf: BIND) -> Self::T<B>
         where
             BIND: Fn(A) -> Self::T<B>,
