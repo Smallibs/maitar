@@ -55,15 +55,21 @@ mod tests_apply {
         mod tests_apply {
             use maitar::specs::applicative::infix::Applicative;
 
-            fn test_apply<Infix: Applicative<i32>>(ma: Infix) -> Infix::T<i32> {
-                ma.apply::<i32, fn(i32) -> i32>(Infix::pure::<fn(i32) -> i32>(|i| i + 1))
-            }
-
-            fn test_apply_with_f<Infix: Applicative<i32>>(
+            fn test_apply_with_f<Infix: Applicative<i32, TL<i32> = Infix>>(
                 f: Infix::T<fn(i32) -> i32>,
+                g: Infix::T<fn(i32) -> i32>,
                 ma: Infix,
             ) -> Infix::T<i32> {
                 ma.apply::<i32, fn(i32) -> i32>(f)
+                    .apply::<i32, fn(i32) -> i32>(g)
+            }
+
+            fn test_apply<Infix: Applicative<i32, TL<i32> = Infix>>(ma: Infix) -> Infix::T<i32> {
+                test_apply_with_f(
+                    Infix::pure::<fn(i32) -> i32>(|i| i - 1),
+                    Infix::pure::<fn(i32) -> i32>(|i| i + 2),
+                    ma,
+                )
             }
 
             #[test]
@@ -81,7 +87,7 @@ mod tests_apply {
             #[test]
             fn apply_option_some_with_f() {
                 type This = Option<i32>;
-                assert_eq!(test_apply_with_f::<This>(None, Some(1)), None)
+                assert_eq!(test_apply_with_f::<This>(None, None, Some(1)), None)
             }
 
             #[test]
@@ -93,7 +99,7 @@ mod tests_apply {
             #[test]
             fn apply_result_ok_with_f() {
                 type This = Result<i32, &'static str>;
-                assert_eq!(test_apply_with_f::<This>(Err(""), Ok(1)), Err(""))
+                assert_eq!(test_apply_with_f::<This>(Err(""), Err(""), Ok(1)), Err(""))
             }
 
             #[test]

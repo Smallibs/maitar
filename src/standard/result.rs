@@ -59,9 +59,12 @@ mod infix {
     use crate::specs::monad::infix::Monad;
     use crate::standard::result::ResultK;
 
+    impl<A, E> HKP for Result<A, E> {
+        type T<B> = Result<B, E>;
+    }
+
     impl<A, E> Transform<A> for Result<A, E> {
         type This = ResultK<E>;
-        type T<B> = Result<B, E>;
 
         fn from_hkp<B>(a: <Self::This as HKP>::T<B>) -> Self::T<B> {
             a

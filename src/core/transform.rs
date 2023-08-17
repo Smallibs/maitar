@@ -1,8 +1,7 @@
 use crate::core::hkp::HKP;
 
-pub trait Transform<A> {
+pub trait Transform<A>: HKP {
     type This: HKP;
-    type T<B>;
 
     fn from_hkp<B>(a: <Self::This as HKP>::T<B>) -> Self::T<B>;
 

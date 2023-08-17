@@ -55,9 +55,12 @@ pub mod infix {
     use crate::specs::monad::infix::Monad;
     use crate::standard::option::OptionK;
 
+    impl<A> HKP for Option<A> {
+        type T<B> = Option<B>;
+    }
+
     impl<A> Transform<A> for Option<A> {
         type This = OptionK;
-        type T<B> = Option<B>;
 
         fn from_hkp<B>(a: <Self::This as HKP>::T<B>) -> Self::T<B> {
             a
