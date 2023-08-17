@@ -7,7 +7,7 @@ pub trait Monad: Bind {
 }
 
 pub mod infix {
-    use crate::specs::infix::Transform;
+    use crate::core::transform::Transform;
     use crate::specs::monad::Monad as Api;
 
     pub trait Monad<A>: Transform<A, T<A> = Self::TL<A>, This = Self::ThisL> {

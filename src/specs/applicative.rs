@@ -10,7 +10,7 @@ pub trait Applicative: Functor {
 
 pub mod infix {
     use crate::specs::applicative::Applicative as Api;
-    use crate::specs::infix::Transform;
+    use crate::core::transform::Transform;
 
     pub trait Applicative<A>: Transform<A, T<A> = Self::TL<A>, This = Self::ThisL> {
         type ThisL: Api;

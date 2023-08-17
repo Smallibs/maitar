@@ -55,7 +55,7 @@ mod infix {
     use crate::specs::applicative::infix::Applicative;
     use crate::specs::bind::infix::Bind;
     use crate::specs::functor::infix::Functor;
-    use crate::specs::infix::Transform;
+    use crate::core::transform::Transform;
     use crate::specs::monad::infix::Monad;
     use crate::standard::result::ResultK;
 
