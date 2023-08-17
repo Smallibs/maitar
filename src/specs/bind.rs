@@ -12,8 +12,8 @@ pub trait Bind: Applicative {
 }
 
 pub mod infix {
-    use crate::specs::bind::Bind as Api;
     use crate::core::transform::Transform;
+    use crate::specs::bind::Bind as Api;
 
     pub trait Bind<A>: Transform<A, T<A> = Self::TL<A>, This = Self::ThisL> {
         type ThisL: Api;

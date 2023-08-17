@@ -7,8 +7,8 @@ pub trait Functor: HKP {
 }
 
 pub mod infix {
-    use crate::specs::functor::Functor as Api;
     use crate::core::transform::Transform;
+    use crate::specs::functor::Functor as Api;
 
     pub trait Functor<A>: Transform<A, T<A> = Self::TL<A>, This = Self::ThisL> {
         type ThisL: Api;

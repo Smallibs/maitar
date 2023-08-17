@@ -48,10 +48,10 @@ impl Monad for OptionK {}
 
 pub mod infix {
     use crate::core::hkp::HKP;
+    use crate::core::transform::Transform;
     use crate::specs::applicative::infix::Applicative;
     use crate::specs::bind::infix::Bind;
     use crate::specs::functor::infix::Functor;
-    use crate::core::transform::Transform;
     use crate::specs::monad::infix::Monad;
     use crate::standard::option::OptionK;
 
