@@ -117,6 +117,8 @@ impl<A> Functor<A> for Option<A> {
 }
 ```
 
+Note: In reality, such material is done once per implementation thanks to the `Transform` trait.
+
 # Why Maitar?
 
 See [Maitar](https://www.elfdict.com/w/maitar?include_old=1) definition for more information. Composition is the main
