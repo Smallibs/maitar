@@ -24,11 +24,12 @@ impl Applicative for VecK {
         vec![a]
     }
 
-    fn apply<A, B, MAP>(mf: Self::T<MAP>, ma: Self::T<A>) -> Self::T<B>
+    fn apply<A, B, MAP>(_mf: Self::T<MAP>, _ma: Self::T<A>) -> Self::T<B>
         where
             MAP: Fn(A) -> B,
     {
-        todo!()
+        todo!();
+        // Clone trait required since mf is a list of functions to be applied!
         // VecK::join(mf.into_iter().map(|f| VecK::map(f, ma)).collect())
     }
 }
@@ -36,6 +37,10 @@ impl Applicative for VecK {
 impl Bind for VecK {
     fn join<A>(mma: Self::T<Self::T<A>>) -> Self::T<A> {
         mma.into_iter().flatten().collect()
+    }
+
+    fn bind<A, B, BIND>(ma: Self::T<A>, mf: BIND) -> Self::T<B> where BIND: Fn(A) -> Self::T<B> {
+        ma.into_iter().flat_map(mf).collect()
     }
 }
 
@@ -54,7 +59,7 @@ pub mod infix {
         type T<B> = Vec<B>;
     }
 
-    impl<'a, A> Transform<A> for Vec<A> {
+    impl<A> Transform<A> for Vec<A> {
         type This = VecK;
 
         fn from_hkp<B>(a: <Self::This as HKP>::T<B>) -> Self::T<B> {
@@ -70,22 +75,22 @@ pub mod infix {
         }
     }
 
-    impl<'a, A> Functor<A> for Vec<A> {
+    impl<A> Functor<A> for Vec<A> {
         type ThisL = VecK;
         type TL<B> = Vec<B>;
     }
 
-    impl<'a, A> Applicative<A> for Vec<A> {
+    impl<A> Applicative<A> for Vec<A> {
         type ThisL = VecK;
         type TL<B> = Vec<B>;
     }
 
-    impl<'a, A> Bind<A> for Vec<A> {
+    impl<A> Bind<A> for Vec<A> {
         type ThisL = VecK;
         type TL<B> = Vec<B>;
     }
 
-    impl<'a, A> Monad<A> for Vec<A> {
+    impl<A> Monad<A> for Vec<A> {
         type ThisL = VecK;
         type TL<B> = Vec<B>;
     }
