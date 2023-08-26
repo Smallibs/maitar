@@ -16,7 +16,7 @@ Some incarnations are available like:
 # Philosophy
 
 In Rust, we can specify abstract types in a trait, i.e. Higher-Kinded Polymorphism
-(HKP for short). Therefore, such types are inhabited in trait implementation.
+(HKP for short). Therefore, such types are inhabited by trait implementations.
 
 ## HKP
 
