@@ -37,8 +37,6 @@ The functional approach has been chosen to prohibit the use of `self`.
 There is no specific relationship between the structure that will implement
 the trait and the implementation of the trait.
 
-
-
 ```rust
 use crate::core::hkp::HKP;
 
@@ -50,6 +48,9 @@ pub trait Functor: HKP {
 ```
 
 ### Infix trait
+
+The `Infix` trait provides the capability to use a data with the `Rust` idiomatic approach
+thanks to the `self` first method parameter.
 
 ```rust
 pub mod infix {
@@ -84,13 +85,20 @@ fn generalized_increment<F: Functor>(ma: F::T<i32>) -> F::T<i32> {
 
 ## Functor implementation
 
+Implementation requires an initial definition of the basic structure. This can be seen as the ability to use or open 
+one type of module, and nothing else. For `Option` we introduce `OptionK` and this one should implements `HKP`.
+
 ```rust
 pub struct OptionK;
 
 impl HKP for OptionK {
     type T<A> = Option<A>;
 }
+```
 
+Then we can implement `Option` functor using the underlying `map` implementation.
+
+```rust
 impl Functor for OptionK {
     fn map<A, B, MAP>(f: MAP, ma: Self::T<A>) -> Self::T<B>
         where
