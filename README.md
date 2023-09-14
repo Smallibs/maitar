@@ -23,7 +23,7 @@ In Rust, we can specify abstract types in a trait, i.e. Higher-Kinded Polymorphi
 
 We propose a simple basic trait `HKP` where an abstract type `T` is defined.
 An important remark about this type is its capability to accept a parametric type.
-This is important if we want to propose constructions inspired by category theory.
+This is important if we want to propose constructions coming from the category theory.
 
 ```rust
 pub trait HKP {
