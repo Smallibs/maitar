@@ -10,8 +10,9 @@ like:
 Some incarnations are available like:
 - Identity,
 - Option,
-- Result and
-- Either
+- Result,
+- Either and
+- Vector
 
 # Philosophy
 
