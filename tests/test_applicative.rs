@@ -3,6 +3,7 @@ mod tests_apply {
     use maitar::specs::applicative::Applicative;
     use maitar::standard::option::OptionK;
     use maitar::standard::result::ResultK;
+    use maitar::standard::vec::VecK;
 
     fn test_apply<This: Applicative>(ma: This::T<i32>) -> This::T<i32> {
         This::apply(This::pure(|i| i + 1), ma)
@@ -51,13 +52,19 @@ mod tests_apply {
         assert_eq!(test_apply::<This>(Err("Error")), Err("Error"))
     }
 
+    #[test]
+    fn apply_vec() {
+        type This = VecK;
+        assert_eq!(test_apply::<This>(vec![1]), vec![2])
+    }
+
     mod infix {
         mod tests_apply {
             use maitar::specs::applicative::infix::Applicative;
 
             type Int2Int = fn(i32) -> i32;
 
-            fn test_apply_with_f<This: Applicative<i32, TL<i32> = This>>(
+            fn test_apply_with_f<This: Applicative<i32, TL<i32>=This>>(
                 f: This::T<Int2Int>,
                 g: This::T<Int2Int>,
                 ma: This,
@@ -65,7 +72,7 @@ mod tests_apply {
                 ma.apply::<_, Int2Int>(f).apply::<_, Int2Int>(g)
             }
 
-            fn test_apply<Infix: Applicative<i32, TL<i32> = Infix>>(ma: Infix) -> Infix::T<i32> {
+            fn test_apply<Infix: Applicative<i32, TL<i32>=Infix>>(ma: Infix) -> Infix::T<i32> {
                 test_apply_with_f(
                     Infix::pure::<Int2Int>(|i| i - 1),
                     Infix::pure::<Int2Int>(|i| i + 2),

@@ -24,13 +24,13 @@ impl Applicative for VecK {
         vec![a]
     }
 
-    fn apply<A, B, MAP>(_mf: Self::T<MAP>, _ma: Self::T<A>) -> Self::T<B>
+    fn apply<A, B, MAP>(mf: Self::T<MAP>, ma: Self::T<A>) -> Self::T<B>
         where
+            A: Clone,
             MAP: Fn(A) -> B,
     {
-        todo!();
-        // Clone trait required since mf is a list of functions to be applied!
-        // VecK::join(mf.into_iter().map(|f| VecK::map(f, ma)).collect())
+        let new_ma = || ma.to_vec().into_iter();
+        VecK::join(mf.into_iter().map(|f| new_ma().map(f).collect()).collect())
     }
 }
 
@@ -39,7 +39,10 @@ impl Bind for VecK {
         mma.into_iter().flatten().collect()
     }
 
-    fn bind<A, B, BIND>(ma: Self::T<A>, mf: BIND) -> Self::T<B> where BIND: Fn(A) -> Self::T<B> {
+    fn bind<A, B, BIND>(ma: Self::T<A>, mf: BIND) -> Self::T<B>
+        where
+            BIND: Fn(A) -> Self::T<B>,
+    {
         ma.into_iter().flat_map(mf).collect()
     }
 }

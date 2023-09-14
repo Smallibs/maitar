@@ -56,6 +56,7 @@ mod tests_bind {
     use maitar::specs::monad::Monad;
     use maitar::standard::option::OptionK;
     use maitar::standard::result::ResultK;
+    use maitar::standard::vec::VecK;
 
     fn test_bind<This: Monad>(ma: This::T<i32>) -> This::T<i32> {
         This::bind(ma, |a| This::returns(a + 1))
@@ -83,6 +84,12 @@ mod tests_bind {
     fn bind_result_err() {
         type This = ResultK<&'static str>;
         assert_eq!(test_bind::<This>(Err("Error")), Err("Error"))
+    }
+
+    #[test]
+    fn bind_vec() {
+        type This = VecK;
+        assert_eq!(test_bind::<This>(vec![1]), vec![2])
     }
 
     mod infix {

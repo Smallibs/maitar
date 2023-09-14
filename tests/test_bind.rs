@@ -50,6 +50,7 @@ mod tests_bind {
     use maitar::specs::bind::Bind;
     use maitar::standard::option::OptionK;
     use maitar::standard::result::ResultK;
+    use maitar::standard::vec::VecK;
 
     fn test_bind<This: Bind>(ma: This::T<i32>, f: fn(i32) -> This::T<i32>) -> This::T<i32> {
         This::bind(ma, f)
@@ -79,6 +80,12 @@ mod tests_bind {
         assert_eq!(test_bind::<This>(Err("Error"), |a| Ok(a + 1)), Err("Error"))
     }
 
+    #[test]
+    fn bind_vec() {
+        type This = VecK;
+        assert_eq!(test_bind::<This>(vec![1], |a| vec![a + 1]), vec![2])
+    }
+
     mod infix {
         use maitar::core::hkp::HKP;
         use maitar::specs::bind::infix::Bind;
@@ -95,7 +102,7 @@ mod tests_bind {
         }
 
         #[test]
-        fn apply_option_some() {
+        fn bind_option_some() {
             type This = Option<i32>;
             assert_eq!(
                 test_bind_with_f::<This>(|i| Some(i - 1), |i| Some(i + 2), Some(1)),
@@ -104,7 +111,7 @@ mod tests_bind {
         }
 
         #[test]
-        fn apply_result_ok() {
+        fn bind_result_ok() {
             type This = Result<i32, &'static str>;
             assert_eq!(
                 test_bind_with_f::<This>(|i| Ok(i - 1), |i| Ok(i + 2), Ok(1)),

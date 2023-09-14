@@ -3,6 +3,7 @@ mod tests_map {
     use maitar::specs::functor::Functor;
     use maitar::standard::option::OptionK;
     use maitar::standard::result::ResultK;
+    use maitar::standard::vec::VecK;
 
     fn test_map<This: Functor>(ma: This::T<i32>) -> This::T<i32> {
         This::map(|a| a + 1, ma)
@@ -30,6 +31,12 @@ mod tests_map {
     fn map_result_err() {
         type This = ResultK<&'static str>;
         assert_eq!(test_map::<This>(Err("Error")), Err("Error"))
+    }
+
+    #[test]
+    fn map_vec() {
+        type This = VecK;
+        assert_eq!(test_map::<This>(vec![1]), vec![2])
     }
 
     mod infix {
