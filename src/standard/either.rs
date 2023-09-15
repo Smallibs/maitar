@@ -16,14 +16,14 @@ pub enum Either<L, R> {
     Right(R),
 }
 
-impl<L> HKP for EitherK<L> {
-    type T<R> = Either<L, R>;
+impl<'a, L> HKP<'a> for EitherK<L> {
+    type T<R: 'a> = Either<L, R>;
 }
 
-impl<E> Functor for EitherK<E> {
-    fn map<A, B, MAP>(f: MAP, ma: Self::T<A>) -> Self::T<B>
+impl<'a, E> Functor<'a> for EitherK<E> {
+    fn map<A: 'a, B: 'a, MAP>(f: MAP, ma: Self::T<A>) -> Self::T<B>
     where
-        MAP: Fn(A) -> B,
+        MAP: Fn(A) -> B + 'a,
     {
         match ma {
             Left(l) => Left(l),
@@ -32,14 +32,14 @@ impl<E> Functor for EitherK<E> {
     }
 }
 
-impl<E> Applicative for EitherK<E> {
-    fn pure<A>(a: A) -> Self::T<A> {
+impl<'a, E> Applicative<'a> for EitherK<E> {
+    fn pure<A: 'a>(a: A) -> Self::T<A> {
         Right(a)
     }
 
-    fn apply<A, B, MAP>(mf: Self::T<MAP>, ma: Self::T<A>) -> Self::T<B>
+    fn apply<A: 'a, B: 'a, MAP>(mf: Self::T<MAP>, ma: Self::T<A>) -> Self::T<B>
     where
-        MAP: Fn(A) -> B,
+        MAP: Fn(A) -> B + 'a,
     {
         match mf {
             Left(l) => Left(l),
@@ -48,8 +48,8 @@ impl<E> Applicative for EitherK<E> {
     }
 }
 
-impl<E> Bind for EitherK<E> {
-    fn join<A>(mma: Self::T<Self::T<A>>) -> Self::T<A> {
+impl<'a, E: 'a> Bind<'a> for EitherK<E> {
+    fn join<A: 'a>(mma: Self::T<Self::T<A>>) -> Self::T<A> {
         match mma {
             Left(ma) => Left(ma),
             Right(r) => r,
@@ -57,7 +57,7 @@ impl<E> Bind for EitherK<E> {
     }
 }
 
-impl<E> Monad for EitherK<E> {}
+impl<'a, E: 'a> Monad<'a> for EitherK<E> {}
 
 mod infix {
     use crate::core::hkp::HKP;
@@ -68,43 +68,43 @@ mod infix {
     use crate::specs::monad::infix::Monad;
     use crate::standard::either::{Either, EitherK};
 
-    impl<L, R> HKP for Either<L, R> {
-        type T<B> = Either<L, B>;
+    impl<'a, L, R> HKP<'a> for Either<L, R> {
+        type T<B: 'a> = Either<L, B>;
     }
 
-    impl<L, R> Transform<R> for Either<L, R> {
+    impl<'a, L, R: 'a> Transform<'a, R> for Either<L, R> {
         type This = EitherK<L>;
 
-        fn from_hkp<B>(a: <Self::This as HKP>::T<B>) -> Self::T<B> {
+        fn from_hkp<B: 'a>(a: <Self::This as HKP<'a>>::T<B>) -> Self::T<B> {
             a
         }
 
-        fn from_self<B>(a: Self::T<B>) -> <Self::This as HKP>::T<B> {
+        fn from_self<B: 'a>(a: Self::T<B>) -> <Self::This as HKP<'a>>::T<B> {
             a
         }
 
-        fn to_hkp(self) -> <Self::This as HKP>::T<R> {
+        fn to_hkp(self) -> <Self::This as HKP<'a>>::T<R> {
             self
         }
     }
 
-    impl<L, R> Functor<R> for Either<L, R> {
+    impl<'a, L, R: 'a> Functor<'a, R> for Either<L, R> {
         type ThisL = EitherK<L>;
-        type TL<B> = Either<L, B>;
+        type TL<B: 'a> = Either<L, B>;
     }
 
-    impl<L, R> Applicative<R> for Either<L, R> {
+    impl<'a, L, R: 'a> Applicative<'a, R> for Either<L, R> {
         type ThisL = EitherK<L>;
-        type TL<B> = Either<L, B>;
+        type TL<B: 'a> = Either<L, B>;
     }
 
-    impl<L, R> Bind<R> for Either<L, R> {
+    impl<'a, L: 'a, R: 'a> Bind<'a, R> for Either<L, R> {
         type ThisL = EitherK<L>;
-        type TL<B> = Either<L, B>;
+        type TL<B: 'a> = Either<L, B>;
     }
 
-    impl<L, R> Monad<R> for Either<L, R> {
+    impl<'a, L: 'a, R: 'a> Monad<'a, R> for Either<L, R> {
         type ThisL = EitherK<L>;
-        type TL<B> = Either<L, B>;
+        type TL<B: 'a> = Either<L, B>;
     }
 }

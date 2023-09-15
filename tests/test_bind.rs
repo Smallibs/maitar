@@ -1,10 +1,10 @@
 #[cfg(test)]
 mod tests_join {
+
     use maitar::specs::bind::Bind;
     use maitar::standard::option::OptionK;
     use maitar::standard::result::ResultK;
-
-    fn test_join<This: Bind>(mma: This::T<This::T<i32>>) -> This::T<i32> {
+    fn test_join<'a, This: Bind<'a>>(mma: This::T<This::T<i32>>) -> This::T<i32> {
         This::join(mma)
     }
 
@@ -52,7 +52,7 @@ mod tests_bind {
     use maitar::standard::result::ResultK;
     use maitar::standard::vec::VecK;
 
-    fn test_bind<This: Bind>(ma: This::T<i32>, f: fn(i32) -> This::T<i32>) -> This::T<i32> {
+    fn test_bind<'a, This: Bind<'a>>(ma: This::T<i32>, f: fn(i32) -> This::T<i32>) -> This::T<i32> {
         This::bind(ma, f)
     }
 
@@ -90,15 +90,15 @@ mod tests_bind {
         use maitar::core::hkp::HKP;
         use maitar::specs::bind::infix::Bind;
 
-        type Int2Int<This> = fn(i32) -> <This as HKP>::T<i32>;
+        type Int2Int<'a, This> = fn(i32) -> <This as HKP<'a>>::T<i32>;
 
-        fn test_bind_with_f<This: Bind<i32, TL<i32> = This>>(
-            f: Int2Int<This>,
-            g: Int2Int<This>,
+        fn test_bind_with_f<'a, This: Bind<'a, i32, TL<i32> = This> + 'a>(
+            f: Int2Int<'a, This>,
+            g: Int2Int<'a, This>,
             ma: This,
         ) -> This::T<i32> {
-            ma.bind::<i32, Int2Int<This>>(f)
-                .bind::<i32, Int2Int<This>>(g)
+            ma.bind::<i32, Int2Int<'a, This>>(f)
+                .bind::<i32, Int2Int<'a, This>>(g)
         }
 
         #[test]

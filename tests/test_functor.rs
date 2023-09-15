@@ -1,11 +1,12 @@
 #[cfg(test)]
 mod tests_map {
+
     use maitar::specs::functor::Functor;
     use maitar::standard::option::OptionK;
     use maitar::standard::result::ResultK;
     use maitar::standard::vec::VecK;
 
-    fn test_map<This: Functor>(ma: This::T<i32>) -> This::T<i32> {
+    fn test_map<'a, This: Functor<'a>>(ma: This::T<i32>) -> This::T<i32> {
         This::map(|a| a + 1, ma)
     }
 
@@ -42,7 +43,7 @@ mod tests_map {
     mod infix {
         use maitar::specs::functor::infix::Functor;
 
-        fn test_map<This: Functor<i32, TL<i32> = This>>(ma: This) -> This::T<i32> {
+        fn test_map<'a, This: Functor<'a, i32, TL<i32> = This>>(ma: This) -> This::T<i32> {
             ma.map(|a| a - 1).map(|a| a + 2)
         }
 

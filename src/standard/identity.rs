@@ -10,39 +10,39 @@ pub struct Identity<A> {
     value: A,
 }
 
-impl HKP for IdentityK {
-    type T<A> = Identity<A>;
+impl<'a> HKP<'a> for IdentityK {
+    type T<A: 'a> = Identity<A>;
 }
 
-impl Functor for IdentityK {
-    fn map<A, B, MAP>(f: MAP, ma: Self::T<A>) -> Self::T<B>
+impl<'a> Functor<'a> for IdentityK {
+    fn map<A: 'a, B: 'a, MAP>(f: MAP, ma: Self::T<A>) -> Self::T<B>
     where
-        MAP: Fn(A) -> B,
+        MAP: Fn(A) -> B + 'a,
     {
         Identity { value: f(ma.value) }
     }
 }
 
-impl Applicative for IdentityK {
-    fn pure<A>(a: A) -> Self::T<A> {
+impl<'a> Applicative<'a> for IdentityK {
+    fn pure<A: 'a>(a: A) -> Self::T<A> {
         Identity { value: a }
     }
 
-    fn apply<A, B, MAP>(mf: Self::T<MAP>, ma: Self::T<A>) -> Self::T<B>
+    fn apply<A: 'a, B: 'a, MAP>(mf: Self::T<MAP>, ma: Self::T<A>) -> Self::T<B>
     where
-        MAP: Fn(A) -> B,
+        MAP: Fn(A) -> B + 'a,
     {
         Self::map(mf.value, ma)
     }
 }
 
-impl Bind for IdentityK {
-    fn join<A>(mma: Self::T<Self::T<A>>) -> Self::T<A> {
+impl<'a> Bind<'a> for IdentityK {
+    fn join<A: 'a>(mma: Self::T<Self::T<A>>) -> Self::T<A> {
         mma.value
     }
 }
 
-impl Monad for IdentityK {}
+impl Monad<'_> for IdentityK {}
 
 pub mod infix {
     use crate::core::hkp::HKP;
@@ -53,43 +53,43 @@ pub mod infix {
     use crate::specs::monad::infix::Monad;
     use crate::standard::identity::{Identity, IdentityK};
 
-    impl<A> HKP for Identity<A> {
-        type T<B> = Identity<B>;
+    impl<'a, A> HKP<'a> for Identity<A> {
+        type T<B: 'a> = Identity<B>;
     }
 
-    impl<A> Transform<A> for Identity<A> {
+    impl<'a, A: 'a> Transform<'a, A> for Identity<A> {
         type This = IdentityK;
 
-        fn from_hkp<B>(a: <Self::This as HKP>::T<B>) -> Self::T<B> {
+        fn from_hkp<B: 'a>(a: <Self::This as HKP<'a>>::T<B>) -> Self::T<B> {
             a
         }
 
-        fn from_self<B>(a: Self::T<B>) -> <Self::This as HKP>::T<B> {
+        fn from_self<B: 'a>(a: Self::T<B>) -> <Self::This as HKP<'a>>::T<B> {
             a
         }
 
-        fn to_hkp(self) -> <Self::This as HKP>::T<A> {
+        fn to_hkp(self) -> <Self::This as HKP<'a>>::T<A> {
             self
         }
     }
 
-    impl<A> Functor<A> for Identity<A> {
+    impl<'a, A: 'a> Functor<'a, A> for Identity<A> {
         type ThisL = IdentityK;
-        type TL<B> = Identity<B>;
+        type TL<B: 'a> = Identity<B>;
     }
 
-    impl<A> Applicative<A> for Identity<A> {
+    impl<'a, A: 'a> Applicative<'a, A> for Identity<A> {
         type ThisL = IdentityK;
-        type TL<B> = Identity<B>;
+        type TL<B: 'a> = Identity<B>;
     }
 
-    impl<A> Bind<A> for Identity<A> {
+    impl<'a, A: 'a> Bind<'a, A> for Identity<A> {
         type ThisL = IdentityK;
-        type TL<B> = Identity<B>;
+        type TL<B: 'a> = Identity<B>;
     }
 
-    impl<A> Monad<A> for Identity<A> {
+    impl<'a, A: 'a> Monad<'a, A> for Identity<A> {
         type ThisL = IdentityK;
-        type TL<B> = Identity<B>;
+        type TL<B: 'a> = Identity<B>;
     }
 }

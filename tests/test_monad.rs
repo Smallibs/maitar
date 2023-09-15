@@ -1,10 +1,11 @@
 #[cfg(test)]
 mod tests_returns {
+
     use maitar::specs::monad::Monad;
     use maitar::standard::option::OptionK;
     use maitar::standard::result::ResultK;
 
-    fn test_join<This: Monad>(mma: This::T<This::T<i32>>) -> This::T<i32> {
+    fn test_join<'a, This: Monad<'a>>(mma: This::T<This::T<i32>>) -> This::T<i32> {
         This::join(mma)
     }
 
@@ -58,7 +59,7 @@ mod tests_bind {
     use maitar::standard::result::ResultK;
     use maitar::standard::vec::VecK;
 
-    fn test_bind<This: Monad>(ma: This::T<i32>) -> This::T<i32> {
+    fn test_bind<'a, This: Monad<'a>>(ma: This::T<i32>) -> This::T<i32> {
         This::bind(ma, |a| This::returns(a + 1))
     }
 
@@ -95,7 +96,7 @@ mod tests_bind {
     mod infix {
         use maitar::specs::monad::infix::Monad;
 
-        fn test_bind_with_f<This: Monad<i32, TL<i32> = This>>(ma: This) -> This::T<i32> {
+        fn test_bind_with_f<'a, This: Monad<'a, i32, TL<i32> = This>>(ma: This) -> This::T<i32> {
             ma.bind::<i32, _>(move |a| This::returns(a - 1))
                 .bind::<i32, _>(move |a| This::returns(a + 2))
         }

@@ -6,12 +6,12 @@ use crate::specs::monad::Monad;
 
 pub struct OptionK;
 
-impl HKP for OptionK {
-    type T<A> = Option<A>;
+impl<'a> HKP<'a> for OptionK {
+    type T<A: 'a> = Option<A>;
 }
 
-impl Functor for OptionK {
-    fn map<A, B, MAP>(f: MAP, ma: Self::T<A>) -> Self::T<B>
+impl<'a> Functor<'a> for OptionK {
+    fn map<A: 'a, B: 'a, MAP>(f: MAP, ma: Self::T<A>) -> Self::T<B>
     where
         MAP: Fn(A) -> B,
     {
@@ -19,14 +19,14 @@ impl Functor for OptionK {
     }
 }
 
-impl Applicative for OptionK {
-    fn pure<A>(a: A) -> Self::T<A> {
+impl<'a> Applicative<'a> for OptionK {
+    fn pure<A: 'a>(a: A) -> Self::T<A> {
         Some(a)
     }
 
-    fn apply<A, B, MAP>(mf: Self::T<MAP>, ma: Self::T<A>) -> Self::T<B>
+    fn apply<A: 'a, B: 'a, MAP>(mf: Self::T<MAP>, ma: Self::T<A>) -> Self::T<B>
     where
-        MAP: Fn(A) -> B,
+        MAP: Fn(A) -> B + 'a,
     {
         match mf {
             Some(f) => Self::map(f, ma),
@@ -35,8 +35,8 @@ impl Applicative for OptionK {
     }
 }
 
-impl Bind for OptionK {
-    fn join<A>(mma: Self::T<Self::T<A>>) -> Self::T<A> {
+impl<'a> Bind<'a> for OptionK {
+    fn join<A: 'a>(mma: Self::T<Self::T<A>>) -> Self::T<A> {
         match mma {
             Some(ma) => ma,
             None => None,
@@ -44,7 +44,7 @@ impl Bind for OptionK {
     }
 }
 
-impl Monad for OptionK {}
+impl Monad<'_> for OptionK {}
 
 pub mod infix {
     use crate::core::hkp::HKP;
@@ -55,43 +55,43 @@ pub mod infix {
     use crate::specs::monad::infix::Monad;
     use crate::standard::option::OptionK;
 
-    impl<A> HKP for Option<A> {
-        type T<B> = Option<B>;
+    impl<'a, A> HKP<'a> for Option<A> {
+        type T<B: 'a> = Option<B>;
     }
 
-    impl<A> Transform<A> for Option<A> {
+    impl<'a, A: 'a> Transform<'a, A> for Option<A> {
         type This = OptionK;
 
-        fn from_hkp<B>(a: <Self::This as HKP>::T<B>) -> Self::T<B> {
+        fn from_hkp<B: 'a>(a: <Self::This as HKP<'a>>::T<B>) -> Self::T<B> {
             a
         }
 
-        fn from_self<B>(a: Self::T<B>) -> <Self::This as HKP>::T<B> {
+        fn from_self<B: 'a>(a: Self::T<B>) -> <Self::This as HKP<'a>>::T<B> {
             a
         }
 
-        fn to_hkp(self) -> <Self::This as HKP>::T<A> {
+        fn to_hkp(self) -> <Self::This as HKP<'a>>::T<A> {
             self
         }
     }
 
-    impl<A> Functor<A> for Option<A> {
+    impl<'a, A: 'a> Functor<'a, A> for Option<A> {
         type ThisL = OptionK;
-        type TL<B> = Option<B>;
+        type TL<B: 'a> = Option<B>;
     }
 
-    impl<A> Applicative<A> for Option<A> {
+    impl<'a, A: 'a> Applicative<'a, A> for Option<A> {
         type ThisL = OptionK;
-        type TL<B> = Option<B>;
+        type TL<B: 'a> = Option<B>;
     }
 
-    impl<A> Bind<A> for Option<A> {
+    impl<'a, A: 'a> Bind<'a, A> for Option<A> {
         type ThisL = OptionK;
-        type TL<B> = Option<B>;
+        type TL<B: 'a> = Option<B>;
     }
 
-    impl<A> Monad<A> for Option<A> {
+    impl<'a, A: 'a> Monad<'a, A> for Option<A> {
         type ThisL = OptionK;
-        type TL<B> = Option<B>;
+        type TL<B: 'a> = Option<B>;
     }
 }
