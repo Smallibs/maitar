@@ -60,16 +60,16 @@ pub mod infix {
         type This: Api;
         type T<B>: Functor<B>;
 
-        fn from_hkp<B>(a: <Self::This as HKP>::T<B>) -> Self::T<B>;
+        fn hkp_to_self<B>(a: <Self::This as HKP>::T<B>) -> Self::T<B>;
 
-        fn to_hkp(self) -> <Self::This as HKP>::T<A>;
+        fn self_to_hkp(self) -> <Self::This as HKP>::T<A>;
 
         fn map<B, MAP>(self, f: MAP) -> Self::T<B>
             where
                 MAP: Fn(A) -> B,
                 Self: Sized,
         {
-            Self::from_hkp(Self::This::map(f, self.to_hkp()))
+            Self::hkp_to_self(Self::This::map(f, self.to_hkp()))
         }
     }
 }
