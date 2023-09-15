@@ -60,11 +60,11 @@ pub mod infix {
     impl<'a, A: 'a> Transform<'a, A> for Identity<A> {
         type This = IdentityK;
 
-        fn from_hkp<B: 'a>(a: <Self::This as HKP<'a>>::T<B>) -> Self::T<B> {
+        fn hkp_to_self<B: 'a>(a: <Self::This as HKP<'a>>::T<B>) -> Self::T<B> {
             a
         }
 
-        fn from_self<B: 'a>(a: Self::T<B>) -> <Self::This as HKP<'a>>::T<B> {
+        fn self_to_hkp<B: 'a>(a: Self::T<B>) -> <Self::This as HKP<'a>>::T<B> {
             a
         }
 

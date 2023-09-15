@@ -19,7 +19,7 @@ pub mod infix {
             MAP: Fn(A) -> B + 'a,
             Self: Sized,
         {
-            Self::from_hkp(Self::This::map(f, self.to_hkp()))
+            Self::hkp_to_self(Self::This::map(f, self.to_hkp()))
         }
     }
 }

@@ -23,8 +23,8 @@ pub mod infix {
         type TL<B: 'a>: Bind<'a, B>;
 
         fn join<B>(mma: Self::T<Self::T<B>>) -> Self::T<B> {
-            Self::from_hkp(Self::This::bind(Self::from_self(mma), |a| {
-                Self::from_self::<B>(a)
+            Self::hkp_to_self(Self::This::bind(Self::self_to_hkp(mma), |a| {
+                Self::self_to_hkp::<B>(a)
             }))
         }
 
@@ -33,8 +33,8 @@ pub mod infix {
             BIND: Fn(A) -> Self::T<B> + 'a,
             Self: Sized,
         {
-            Self::from_hkp(Self::This::bind(self.to_hkp(), move |a| {
-                Self::from_self::<B>(mf(a))
+            Self::hkp_to_self(Self::This::bind(self.to_hkp(), move |a| {
+                Self::self_to_hkp::<B>(mf(a))
             }))
         }
     }

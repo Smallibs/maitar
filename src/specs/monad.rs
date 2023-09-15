@@ -17,12 +17,12 @@ pub mod infix {
         type TL<B: 'a>: Monad<'a, B>;
 
         fn returns<B>(b: B) -> Self::T<B> {
-            Self::from_hkp(Self::This::returns(b))
+            Self::hkp_to_self(Self::This::returns(b))
         }
 
         fn join<B>(mma: Self::T<Self::T<B>>) -> Self::T<B> {
-            Self::from_hkp(<Self::This as Bind>::bind(Self::from_self(mma), |a| {
-                Self::from_self::<B>(a)
+            Self::hkp_to_self(<Self::This as Bind>::bind(Self::self_to_hkp(mma), |a| {
+                Self::self_to_hkp::<B>(a)
             }))
         }
 
@@ -31,8 +31,8 @@ pub mod infix {
             BIND: Fn(A) -> Self::T<B> + 'a,
             Self: Sized,
         {
-            Self::from_hkp(<Self::This as Bind>::bind(self.to_hkp(), move |a| {
-                Self::from_self::<B>(mf(a))
+            Self::hkp_to_self(<Self::This as Bind>::bind(self.to_hkp(), move |a| {
+                Self::self_to_hkp::<B>(mf(a))
             }))
         }
     }

@@ -20,7 +20,7 @@ pub mod infix {
         type TL<B: 'a>: Applicative<'a, B>;
 
         fn pure<B>(a: B) -> Self::T<B> {
-            Self::from_hkp(Self::This::pure(a))
+            Self::hkp_to_self(Self::This::pure(a))
         }
 
         fn apply<B, MAP>(self, mf: Self::T<MAP>) -> Self::T<B>
@@ -29,7 +29,10 @@ pub mod infix {
             MAP: Fn(A) -> B,
             Self: Sized,
         {
-            Self::from_hkp(Self::This::apply(Self::from_self::<MAP>(mf), self.to_hkp()))
+            Self::hkp_to_self(Self::This::apply(
+                Self::self_to_hkp::<MAP>(mf),
+                self.to_hkp(),
+            ))
         }
     }
 }
