@@ -48,7 +48,7 @@ impl<'e, E: Copy, F: Bind<'e> + 'e> Bind<'e> for ReaderK<'e, E, F> {
         BIND: Fn(A) -> Self::T<B> + 'e,
     {
         let Reader(va, _) = ma;
-        let run = move |e1: E| {
+        let run = |e1: E| {
             F::bind(va(e1), move |e2: A| {
                 let Reader(v, _) = f(e2);
                 v(e1)
