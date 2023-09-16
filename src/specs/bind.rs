@@ -4,14 +4,13 @@ pub trait Bind<'a>: Applicative<'a>
 where
     Self: 'a,
 {
-    fn join<A>(mma: Self::T<Self::T<A>>) -> Self::T<A>;
+    fn join<A>(mma: Self::T<Self::T<A>>) -> Self::T<A> {
+        Self::bind(mma, |e| e)
+    }
 
     fn bind<A, B, BIND>(ma: Self::T<A>, mf: BIND) -> Self::T<B>
     where
-        BIND: Fn(A) -> Self::T<B> + 'a,
-    {
-        Self::join(Self::map(mf, ma))
-    }
+        BIND: Fn(A) -> Self::T<B> + 'a;
 }
 
 pub mod infix {

@@ -36,9 +36,12 @@ impl<'a> Applicative<'a> for OptionK {
 }
 
 impl<'a> Bind<'a> for OptionK {
-    fn join<A: 'a>(mma: Self::T<Self::T<A>>) -> Self::T<A> {
-        match mma {
-            Some(ma) => ma,
+    fn bind<A: 'a, B: 'a, BIND>(ma: Self::T<A>, f: BIND) -> Self::T<B>
+    where
+        BIND: Fn(A) -> Self::T<B> + 'a,
+    {
+        match ma {
+            Some(a) => f(a),
             None => None,
         }
     }

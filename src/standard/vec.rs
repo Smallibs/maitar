@@ -35,10 +35,6 @@ impl<'a> Applicative<'a> for VecK {
 }
 
 impl<'a> Bind<'a> for VecK {
-    fn join<A: 'a>(mma: Self::T<Self::T<A>>) -> Self::T<A> {
-        mma.into_iter().flatten().collect()
-    }
-
     fn bind<A: 'a, B: 'a, BIND>(ma: Self::T<A>, mf: BIND) -> Self::T<B>
     where
         BIND: Fn(A) -> Self::T<B> + 'a,

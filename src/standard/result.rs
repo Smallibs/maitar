@@ -40,9 +40,12 @@ impl<'a, E> Applicative<'a> for ResultK<E> {
 }
 
 impl<'a, E: 'a> Bind<'a> for ResultK<E> {
-    fn join<A: 'a>(mma: Self::T<Self::T<A>>) -> Self::T<A> {
-        match mma {
-            Ok(ma) => ma,
+    fn bind<A: 'a, B: 'a, BIND>(ma: Self::T<A>, f: BIND) -> Self::T<B>
+    where
+        BIND: Fn(A) -> Self::T<B> + 'a,
+    {
+        match ma {
+            Ok(a) => f(a),
             Err(e) => Err(e),
         }
     }

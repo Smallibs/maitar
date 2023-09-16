@@ -37,8 +37,11 @@ impl<'a> Applicative<'a> for IdentityK {
 }
 
 impl<'a> Bind<'a> for IdentityK {
-    fn join<A: 'a>(mma: Self::T<Self::T<A>>) -> Self::T<A> {
-        mma.value
+    fn bind<A: 'a, B: 'a, BIND>(ma: Self::T<A>, f: BIND) -> Self::T<B>
+    where
+        BIND: Fn(A) -> Self::T<B> + 'a,
+    {
+        f(ma.value)
     }
 }
 

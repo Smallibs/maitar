@@ -49,10 +49,13 @@ impl<'a, E> Applicative<'a> for EitherK<E> {
 }
 
 impl<'a, E: 'a> Bind<'a> for EitherK<E> {
-    fn join<A: 'a>(mma: Self::T<Self::T<A>>) -> Self::T<A> {
-        match mma {
-            Left(ma) => Left(ma),
-            Right(r) => r,
+    fn bind<A: 'a, B: 'a, BIND>(ma: Self::T<A>, f: BIND) -> Self::T<B>
+    where
+        BIND: Fn(A) -> Self::T<B> + 'a,
+    {
+        match ma {
+            Left(a) => Left(a),
+            Right(r) => f(r),
         }
     }
 }
