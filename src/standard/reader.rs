@@ -23,7 +23,7 @@ impl<'e, E, F: Functor<'e> + 'e> Functor<'e> for ReaderK<'e, E, F> {
     }
 }
 
-impl<'e, E, F: Applicative<'e> + 'e> Applicative<'e> for ReaderK<'e, E, F> {
+impl<'e, E: Clone, F: Applicative<'e> + 'e> Applicative<'e> for ReaderK<'e, E, F> {
     fn pure<A: 'e>(a: A) -> Self::T<A> {
         Reader(Box::new(|_| F::pure(a)), PhantomData)
     }
@@ -33,6 +33,9 @@ impl<'e, E, F: Applicative<'e> + 'e> Applicative<'e> for ReaderK<'e, E, F> {
         A: Clone,
         MAP: Fn(A) -> B,
     {
-        todo!()
+        let Reader(vf, _) = mf;
+        let Reader(va, _) = ma;
+        let run = |e: E| F::apply(vf(e.clone()), va(e));
+        Reader(Box::new(run), PhantomData)
     }
 }
