@@ -2,6 +2,8 @@
 
 Maitar is a rust library providing some functional programming constructions 
 like:
+- Semigroup,
+- Monoid,
 - Functor,
 - Applicative;
 - Bind and
@@ -12,8 +14,9 @@ Some incarnations are available like:
 - Option,
 - Result,
 - Either
-- Vector and
-- Reader
+- Vector,
+- Reader and
+- Writer.
 
 # Philosophy
 
