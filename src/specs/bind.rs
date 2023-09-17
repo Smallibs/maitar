@@ -1,3 +1,9 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2023 Didier Plaindoux
+ */
+
 use crate::specs::applicative::Applicative;
 
 pub trait Bind<'a>: Applicative<'a>

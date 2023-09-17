@@ -1,3 +1,9 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2023 Didier Plaindoux
+ */
+
 use crate::specs::bind::Bind;
 
 pub trait Monad<'a>: Bind<'a> {

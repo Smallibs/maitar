@@ -1,3 +1,9 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2023 Didier Plaindoux
+ */
+
 #[cfg(test)]
 mod tests_map {
 

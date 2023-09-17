@@ -1,6 +1,9 @@
 /*
+ * MIT License
+ *
+ * Copyright (c) 2023 Didier Plaindoux
+ */
 
-*/
 pub mod either;
 pub mod identity;
 pub mod option;

@@ -1,3 +1,9 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2023 Didier Plaindoux
+ */
+
 use crate::core::hkp::HKP;
 
 pub trait Functor<'a>: HKP<'a> {

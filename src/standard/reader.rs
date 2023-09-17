@@ -1,3 +1,9 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2023 Didier Plaindoux
+ */
+
 use crate::core::hkp::HKP;
 use crate::specs::applicative::Applicative;
 use crate::specs::bind::Bind;
@@ -60,6 +66,26 @@ impl<'e, E: Copy, F: Bind<'e> + 'e> Bind<'e> for ReaderK<'e, E, F> {
 }
 
 impl<'e, E: Copy, F: Bind<'e> + 'e> Monad<'e> for ReaderK<'e, E, F> {}
+
+impl<'e, E: Copy + 'e, F: Monad<'e> + 'e> ReaderK<'e, E, F> {
+    pub fn reader<A>(f: fn(E) -> F::T<A>) -> Reader<'e, E, F, A> {
+        Reader(Box::new(f), PhantomData)
+    }
+
+    pub fn run<A>(reader: Reader<'e, E, F, A>) -> Box<dyn FnOnce(E) -> F::T<A> + 'e> {
+        let Reader(f, _) = reader;
+        f
+    }
+
+    pub fn ask() -> Reader<'e, E, F, E> {
+        Reader(Box::new(F::returns), PhantomData)
+    }
+
+    pub fn local<A>(f: fn(E) -> E, reader: Reader<'e, E, F, A>) -> Reader<'e, E, F, A> {
+        let Reader(run, _) = reader;
+        Reader(Box::new(move |e| run(f(e))), PhantomData)
+    }
+}
 
 pub mod infix {
     use crate::core::hkp::HKP;

@@ -1,3 +1,9 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2023 Didier Plaindoux
+ */
+
 use crate::specs::functor::Functor;
 
 pub trait Applicative<'a>: Functor<'a> {

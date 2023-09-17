@@ -1,3 +1,9 @@
+/*
+ * MIT License
+ *
+ * Copyright (c) 2023 Didier Plaindoux
+ */
+
 use std::marker::PhantomData;
 
 use crate::core::hkp::HKP;
