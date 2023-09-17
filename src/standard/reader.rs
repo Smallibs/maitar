@@ -60,3 +60,61 @@ impl<'e, E: Copy, F: Bind<'e> + 'e> Bind<'e> for ReaderK<'e, E, F> {
 }
 
 impl<'e, E: Copy, F: Bind<'e> + 'e> Monad<'e> for ReaderK<'e, E, F> {}
+
+pub mod infix {
+    use crate::core::hkp::HKP;
+    use crate::core::transform::Transform;
+    use crate::specs::applicative::infix::Applicative;
+    use crate::specs::bind::infix::Bind;
+    use crate::specs::functor::infix::Functor;
+    use crate::specs::monad::infix::Monad;
+    use crate::standard::reader::{Reader, ReaderK};
+
+    impl<'a, E, F: HKP<'a>, A: 'a> HKP<'a> for Reader<'a, E, F, A> {
+        type T<B: 'a> = Reader<'a, E, F, B>;
+    }
+
+    impl<'a, E: 'a, F: HKP<'a>, A: 'a> Transform<'a, A> for Reader<'a, E, F, A> {
+        type This = ReaderK<'a, E, F>;
+
+        fn hkp_to_self<B: 'a>(a: <Self::This as HKP<'a>>::T<B>) -> Self::T<B> {
+            a
+        }
+
+        fn self_to_hkp<B: 'a>(a: Self::T<B>) -> <Self::This as HKP<'a>>::T<B> {
+            a
+        }
+
+        fn to_hkp(self) -> <Self::This as HKP<'a>>::T<A> {
+            self
+        }
+    }
+
+    impl<'a, E: 'a, F: HKP<'a> + crate::specs::functor::Functor<'a> + 'a, A: 'a> Functor<'a, A>
+        for Reader<'a, E, F, A>
+    {
+        type ThisL = ReaderK<'a, E, F>;
+        type TL<B: 'a> = Reader<'a, E, F, B>;
+    }
+
+    impl<'a, E: 'a + Copy, F: HKP<'a> + crate::specs::applicative::Applicative<'a> + 'a, A: 'a>
+        Applicative<'a, A> for Reader<'a, E, F, A>
+    {
+        type ThisL = ReaderK<'a, E, F>;
+        type TL<B: 'a> = Reader<'a, E, F, B>;
+    }
+
+    impl<'a, E: 'a + Copy, F: HKP<'a> + crate::specs::bind::Bind<'a> + 'a, A: 'a> Bind<'a, A>
+        for Reader<'a, E, F, A>
+    {
+        type ThisL = ReaderK<'a, E, F>;
+        type TL<B: 'a> = Reader<'a, E, F, B>;
+    }
+
+    impl<'a, E: 'a + Copy, F: HKP<'a> + crate::specs::monad::Monad<'a> + 'a, A: 'a> Monad<'a, A>
+        for Reader<'a, E, F, A>
+    {
+        type ThisL = ReaderK<'a, E, F>;
+        type TL<B: 'a> = Reader<'a, E, F, B>;
+    }
+}
