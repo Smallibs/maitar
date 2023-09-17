@@ -13,7 +13,7 @@ use std::marker::PhantomData;
 
 pub struct Reader<'a, E, F: HKP<'a>, A: 'a>(Box<dyn FnOnce(E) -> F::T<A> + 'a>, PhantomData<F>);
 
-pub struct ReaderK<'a, E, F: HKP<'a>>(F, PhantomData<&'a E>);
+pub struct ReaderK<'a, E, F: HKP<'a>>(PhantomData<&'a E>, PhantomData<F>);
 
 impl<'a, E, F: HKP<'a>> HKP<'a> for ReaderK<'a, E, F> {
     type T<B: 'a> = Reader<'a, E, F, B>;

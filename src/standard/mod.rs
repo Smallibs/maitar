@@ -10,3 +10,4 @@ pub mod option;
 pub mod reader;
 pub mod result;
 pub mod vec;
+pub mod writer;
