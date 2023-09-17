@@ -81,7 +81,7 @@ impl<'e, E: Copy + 'e, F: Monad<'e> + 'e> ReaderK<'e, E, F> {
         Reader(Box::new(F::returns), PhantomData)
     }
 
-    pub fn local<A>(f: fn(E) -> E, reader: Reader<'e, E, F, A>) -> Reader<'e, E, F, A> {
+    pub fn local<A>(f: Box<dyn Fn(E) -> E>, reader: Reader<'e, E, F, A>) -> Reader<'e, E, F, A> {
         let Reader(run, _) = reader;
         Reader(Box::new(move |e| run(f(e))), PhantomData)
     }
