@@ -7,3 +7,4 @@
 pub mod functions;
 pub mod hkp;
 pub mod transform;
+pub mod types;

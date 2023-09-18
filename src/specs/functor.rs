@@ -13,14 +13,17 @@ pub trait Functor<'a>: HKP<'a> {
 }
 
 pub mod curry {
+    use crate::core::functions::curry;
     use crate::specs::functor::Functor as Api;
 
     pub trait Functor<'a>: Api<'a> {
         fn map<A, B, MAP>(f: MAP) -> Box<dyn FnOnce(Self::T<A>) -> Self::T<B> + 'a>
         where
+            Self: 'a,
+            A: Copy,
             MAP: Fn(A) -> B + 'a,
         {
-            Box::new(move |a| <Self as Api<'a>>::map(f, a))
+            curry(<Self as Api<'a>>::map)(f)
         }
     }
 }

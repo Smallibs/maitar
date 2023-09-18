@@ -17,11 +17,11 @@ pub trait Bind<'a>: Applicative<'a> {
 }
 
 pub mod curry {
-    use crate::core::functions::FunOnce;
+    use crate::core::types::FunOnceLT;
     use crate::specs::bind::Bind as Api;
 
     pub trait Bind<'a>: Api<'a> {
-        fn bind<A, B, BIND>(ma: Self::T<A>) -> FunOnce<'a, BIND, Self::T<B>>
+        fn bind<A, B, BIND>(ma: Self::T<A>) -> FunOnceLT<'a, BIND, Self::T<B>>
         where
             Self: 'a,
             BIND: Fn(A) -> Self::T<B> + 'a,

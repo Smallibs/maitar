@@ -4,7 +4,7 @@
  * Copyright (c) 2023 Didier Plaindoux
  */
 
-use crate::core::functions::Fun;
+use crate::core::types::Fun;
 use crate::specs::functor::Functor;
 
 pub trait Applicative<'a>: Functor<'a> {
@@ -29,11 +29,11 @@ pub trait Applicative<'a>: Functor<'a> {
 }
 
 pub mod curry {
-    use crate::core::functions::{Fun, FunOnce};
+    use crate::core::types::{Fun, FunOnceLT};
     use crate::specs::applicative::Applicative as Api;
 
     pub trait Applicative<'a>: Api<'a> {
-        fn apply<A, B, MAP>(mf: Self::T<MAP>) -> FunOnce<'a, Self::T<A>, Self::T<B>>
+        fn apply<A, B, MAP>(mf: Self::T<MAP>) -> FunOnceLT<'a, Self::T<A>, Self::T<B>>
         where
             Self: 'a,
             A: Clone,
@@ -42,13 +42,13 @@ pub mod curry {
             Box::new(move |ma| <Self as Api<'a>>::apply(mf, ma))
         }
 
-        fn lift1<A, B>(f: Fun<A, B>) -> FunOnce<'a, Self::T<A>, Self::T<B>> {
+        fn lift1<A, B>(f: Fun<A, B>) -> FunOnceLT<'a, Self::T<A>, Self::T<B>> {
             Box::new(move |ma| <Self as Api<'a>>::lift1(f, ma))
         }
 
         fn lift2<A, B, C>(
             f: Fun<A, Fun<B, C>>,
-        ) -> FunOnce<'a, Self::T<A>, FunOnce<'a, Self::T<B>, Self::T<C>>>
+        ) -> FunOnceLT<'a, Self::T<A>, FunOnceLT<'a, Self::T<B>, Self::T<C>>>
         where
             Self: 'a,
             A: Clone,
