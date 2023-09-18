@@ -17,6 +17,7 @@ pub trait Bind<'a>: Applicative<'a> {
 }
 
 pub mod curry {
+    use crate::core::functions::curry;
     use crate::core::types::FunOnceLT;
     use crate::specs::bind::Bind as Api;
 
@@ -26,7 +27,7 @@ pub mod curry {
             Self: 'a,
             BIND: Fn(A) -> Self::T<B> + 'a,
         {
-            Box::new(move |f| <Self as Api<'a>>::bind(ma, f))
+            curry(<Self as Api<'a>>::bind)(ma)
         }
     }
 }

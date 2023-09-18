@@ -4,7 +4,6 @@
  * Copyright (c) 2023 Didier Plaindoux
  */
 
-use crate::core::types::Fun;
 use crate::specs::functor::Functor;
 
 pub trait Applicative<'a>: Functor<'a> {
@@ -15,46 +14,56 @@ pub trait Applicative<'a>: Functor<'a> {
         A: Clone,
         MAP: Fn(A) -> B;
 
-    fn lift1<A, B>(f: Fun<A, B>, ma: Self::T<A>) -> Self::T<B> {
+    fn lift1<A, B, F>(f: F, ma: Self::T<A>) -> Self::T<B>
+    where
+        F: Fn(A) -> B + 'a,
+    {
         Self::map(f, ma)
     }
 
-    fn lift2<A: Clone, B: Clone, C>(
-        f: Fun<A, Fun<B, C>>,
-        ma: Self::T<A>,
-        mb: Self::T<B>,
-    ) -> Self::T<C> {
+    fn lift2<A, B, C, F>(f: F, ma: Self::T<A>, mb: Self::T<B>) -> Self::T<C>
+    where
+        A: Clone,
+        B: Clone,
+        F: Fn(A) -> Box<dyn Fn(B) -> C> + 'a,
+    {
         Self::apply(Self::apply(Self::pure(f), ma), mb)
     }
 }
 
 pub mod curry {
-    use crate::core::types::{Fun, FunOnceLT};
+    use crate::core::functions::{curry, curry3};
+    use crate::core::types::FunOnceLT;
     use crate::specs::applicative::Applicative as Api;
 
     pub trait Applicative<'a>: Api<'a> {
-        fn apply<A, B, MAP>(mf: Self::T<MAP>) -> FunOnceLT<'a, Self::T<A>, Self::T<B>>
+        fn apply<A, B, F>(mf: Self::T<F>) -> FunOnceLT<'a, Self::T<A>, Self::T<B>>
         where
             Self: 'a,
             A: Clone,
-            MAP: Fn(A) -> B,
+            F: Fn(A) -> B,
         {
-            Box::new(move |ma| <Self as Api<'a>>::apply(mf, ma))
+            curry(<Self as Api<'a>>::apply)(mf)
         }
 
-        fn lift1<A, B>(f: Fun<A, B>) -> FunOnceLT<'a, Self::T<A>, Self::T<B>> {
-            Box::new(move |ma| <Self as Api<'a>>::lift1(f, ma))
+        fn lift1<A, B, F>(f: F) -> FunOnceLT<'a, Self::T<A>, Self::T<B>>
+        where
+            Self: 'a,
+            F: Fn(A) -> B + 'a,
+        {
+            curry(<Self as Api<'a>>::lift1)(f)
         }
 
-        fn lift2<A, B, C>(
-            f: Fun<A, Fun<B, C>>,
+        fn lift2<A, B, C, F>(
+            f: F,
         ) -> FunOnceLT<'a, Self::T<A>, FunOnceLT<'a, Self::T<B>, Self::T<C>>>
         where
             Self: 'a,
             A: Clone,
             B: Clone,
+            F: Fn(A) -> Box<dyn Fn(B) -> C> + 'a,
         {
-            Box::new(move |ma| Box::new(move |mb| <Self as Api<'a>>::lift2(f, ma, mb)))
+            curry3(<Self as Api<'a>>::lift2)(f)
         }
     }
 }

@@ -4,19 +4,28 @@
  * Copyright (c) 2023 Didier Plaindoux
  */
 
-pub fn uncurry<'a, A, B, C, CURRY>(f: CURRY) -> Box<dyn Fn(A, B) -> C + 'a>
+use crate::core::types::FunOnceLT;
+
+pub fn uncurry<'a, A, B, C, F>(f: F) -> Box<dyn Fn(A, B) -> C + 'a>
 where
-    CURRY: Fn(A) -> Box<dyn Fn(B) -> C> + 'a,
+    F: Fn(A) -> Box<dyn Fn(B) -> C> + 'a,
 {
     Box::new(move |a, b| f(a)(b))
 }
 
-pub fn curry<'a, A, B, C, UNCURRY>(
-    f: UNCURRY,
-) -> Box<dyn FnOnce(A) -> Box<dyn FnOnce(B) -> C + 'a> + 'a>
+pub fn curry<'a, A, B, C, F>(f: F) -> FunOnceLT<'a, A, FunOnceLT<'a, B, C>>
 where
     A: 'a,
-    UNCURRY: FnOnce(A, B) -> C + 'a,
+    F: FnOnce(A, B) -> C + 'a,
 {
     Box::new(move |a| Box::new(move |b| f(a, b)))
+}
+
+pub fn curry3<'a, A, B, C, D, F>(f: F) -> FunOnceLT<'a, A, FunOnceLT<'a, B, FunOnceLT<'a, C, D>>>
+where
+    A: 'a,
+    B: 'a,
+    F: FnOnce(A, B, C) -> D + 'a,
+{
+    Box::new(move |a| Box::new(move |b| Box::new(move |c| f(a, b, c))))
 }
