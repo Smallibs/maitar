@@ -20,7 +20,6 @@ pub mod curry {
         fn map<A, B, MAP>(f: MAP) -> Box<dyn FnOnce(Self::T<A>) -> Self::T<B> + 'a>
         where
             Self: 'a,
-            A: Copy,
             MAP: Fn(A) -> B + 'a,
         {
             curry(<Self as Api<'a>>::map)(f)

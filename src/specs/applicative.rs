@@ -33,11 +33,10 @@ pub trait Applicative<'a>: Functor<'a> {
 
 pub mod curry {
     use crate::core::functions::{curry, curry3};
-    use crate::core::types::FunOnceLT;
     use crate::specs::applicative::Applicative as Api;
 
     pub trait Applicative<'a>: Api<'a> {
-        fn apply<A, B, F>(mf: Self::T<F>) -> FunOnceLT<'a, Self::T<A>, Self::T<B>>
+        fn apply<A, B, F>(mf: Self::T<F>) -> Box<dyn FnOnce(Self::T<A>) -> Self::T<B> + 'a>
         where
             Self: 'a,
             A: Clone,
@@ -46,7 +45,7 @@ pub mod curry {
             curry(<Self as Api<'a>>::apply)(mf)
         }
 
-        fn lift1<A, B, F>(f: F) -> FunOnceLT<'a, Self::T<A>, Self::T<B>>
+        fn lift1<A, B, F>(f: F) -> Box<dyn FnOnce(Self::T<A>) -> Self::T<B> + 'a>
         where
             Self: 'a,
             F: Fn(A) -> B + 'a,
@@ -56,7 +55,7 @@ pub mod curry {
 
         fn lift2<A, B, C, F>(
             f: F,
-        ) -> FunOnceLT<'a, Self::T<A>, FunOnceLT<'a, Self::T<B>, Self::T<C>>>
+        ) -> Box<dyn FnOnce(Self::T<A>) -> Box<dyn FnOnce(Self::T<B>) -> Self::T<C> + 'a> + 'a>
         where
             Self: 'a,
             A: Clone,

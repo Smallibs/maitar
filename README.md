@@ -18,6 +18,8 @@ Some incarnations are available like:
 - Reader and
 - Writer.
 
+Note: Curried version is not yet optimal since it relies on Boxed using polymorphic functions (dynamic dispatch). 
+
 # Philosophy
 
 In Rust, we can specify abstract types in a trait, i.e. Higher-Kinded Polymorphism
