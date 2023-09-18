@@ -4,6 +4,7 @@
  * Copyright (c) 2023 Didier Plaindoux
  */
 
+use crate::core::functions::FunOnce;
 use crate::core::hkp::HKP;
 use crate::specs::applicative::Applicative;
 use crate::specs::bind::Bind;
@@ -11,7 +12,7 @@ use crate::specs::functor::Functor;
 use crate::specs::monad::Monad;
 use std::marker::PhantomData;
 
-pub struct Reader<'a, E, F: HKP<'a>, A: 'a>(Box<dyn FnOnce(E) -> F::T<A> + 'a>, PhantomData<F>);
+pub struct Reader<'a, E, F: HKP<'a>, A: 'a>(FunOnce<'a, E, F::T<A>>, PhantomData<F>);
 
 pub struct ReaderK<'a, E, F: HKP<'a>>(PhantomData<&'a E>, PhantomData<F>);
 

@@ -58,7 +58,10 @@ mod tests_bind {
     use maitar::standard::result::ResultK;
     use maitar::standard::vec::VecK;
 
-    fn test_bind<'a, This: Bind<'a>>(ma: This::T<i32>, f: fn(i32) -> This::T<i32>) -> This::T<i32> {
+    fn test_bind<'a, This: Bind<'a> + 'a>(
+        ma: This::T<i32>,
+        f: fn(i32) -> This::T<i32>,
+    ) -> This::T<i32> {
         This::bind(ma, f)
     }
 

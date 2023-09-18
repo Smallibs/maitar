@@ -33,7 +33,7 @@ impl<'e, E: Monoid<T = E>, F: Applicative<'e>> Applicative<'e> for WriterK<'e, E
         Writer(F::pure((a, E::neutral())))
     }
 
-    fn apply<A, B, MAP>(mf: Self::T<MAP>, ma: Self::T<A>) -> Self::T<B>
+    fn apply<A, B, MAP>(_mf: Self::T<MAP>, _ma: Self::T<A>) -> Self::T<B>
     where
         A: Clone,
         MAP: Fn(A) -> B,

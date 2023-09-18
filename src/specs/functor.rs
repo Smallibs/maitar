@@ -12,6 +12,19 @@ pub trait Functor<'a>: HKP<'a> {
         MAP: Fn(A) -> B + 'a;
 }
 
+pub mod curry {
+    use crate::specs::functor::Functor as Api;
+
+    pub trait Functor<'a>: Api<'a> {
+        fn map<A, B, MAP>(f: MAP) -> Box<dyn FnOnce(Self::T<A>) -> Self::T<B> + 'a>
+        where
+            MAP: Fn(A) -> B + 'a,
+        {
+            Box::new(move |a| <Self as Api<'a>>::map(f, a))
+        }
+    }
+}
+
 pub mod infix {
     use crate::core::transform::Transform;
     use crate::specs::functor::Functor as Api;

@@ -12,6 +12,12 @@ pub trait Monad<'a>: Bind<'a> {
     }
 }
 
+pub mod curry {
+    use crate::specs::bind::curry::Bind;
+
+    pub trait Monad<'a>: Bind<'a> {}
+}
+
 pub mod infix {
     use crate::core::transform::Transform;
     use crate::specs::bind::Bind;
