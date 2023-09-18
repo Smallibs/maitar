@@ -18,7 +18,8 @@ Some incarnations are available like:
 - Reader and
 - Writer.
 
-Note: Curried version is not yet optimal since it relies on Boxed using polymorphic functions (dynamic dispatch). 
+Note: The curried version is not optimal since it relies on Boxed polymorphic functions 
+and then dynamic dispatch. 
 
 # Philosophy
 
@@ -28,7 +29,7 @@ In Rust, we can specify abstract types in a trait, i.e. Higher-Kinded Polymorphi
 ## HKP
 
 We propose a simple basic trait `HKP` where an abstract type `T` is defined.
-An important remark about this type is its capability to accept a parametric type.
+An essential remark about this type is its capability to accept a parametric type.
 This is important if we want to propose constructions coming from the category theory.
 
 ```rust
@@ -55,7 +56,7 @@ pub trait Functor: HKP {
 
 ### Infix trait
 
-The `Infix` trait provides the capability to use a data with the `Rust` idiomatic approach
+The `Infix` trait provides the capability to use data with the `Rust` idiomatic approach
 thanks to the `self` first method parameter.
 
 ```rust
@@ -91,8 +92,9 @@ fn generalized_increment<F: Functor>(ma: F::T<i32>) -> F::T<i32> {
 
 ## Functor implementation
 
-Implementation requires an initial definition of the basic structure. This can be seen as the ability to use or open 
-one type of module, and nothing else. For `Option` we introduce `OptionK` and this one should implements `HKP`.
+Implementation requires an initial definition of the basic structure. This can be seen as 
+the ability to use or open one type of module, and nothing else. For `Option` we introduce 
+`OptionK` and this one should implement `HKP`.
 
 ```rust
 pub struct OptionK;
@@ -136,7 +138,7 @@ Note: In reality, such material is done once per implementation thanks to the `T
 
 # Why Maitar?
 
-See [Maitar](https://www.elfdict.com/w/maitar?include_old=1) definition for more information. Composition is the main
+See [Maitar](https://www.elfdict.com/w/maitar?include_old=1) definition for more information. Composition is the main 
 idea behind this word.
 
 # Other approaches and propositions
