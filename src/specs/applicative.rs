@@ -9,10 +9,10 @@ use crate::specs::functor::Functor;
 pub trait Applicative<'a>: Functor<'a> {
     fn pure<A>(a: A) -> Self::T<A>;
 
-    fn apply<A, B, MAP>(mf: Self::T<MAP>, ma: Self::T<A>) -> Self::T<B>
+    fn apply<A, B, F>(mf: Self::T<F>, ma: Self::T<A>) -> Self::T<B>
     where
         A: Clone,
-        MAP: Fn(A) -> B;
+        F: Fn(A) -> B + Clone;
 
     fn lift1<A, B, F>(f: F, ma: Self::T<A>) -> Self::T<B>
     where
@@ -21,13 +21,14 @@ pub trait Applicative<'a>: Functor<'a> {
         Self::map(f, ma)
     }
 
-    fn lift2<A, B, C, F>(f: F, ma: Self::T<A>, mb: Self::T<B>) -> Self::T<C>
+    fn lift2<A, B, C, F, G>(f: F, ma: Self::T<A>, mb: Self::T<B>) -> Self::T<C>
     where
         A: Clone,
         B: Clone,
-        F: Fn(A) -> Box<dyn Fn(B) -> C> + 'a,
+        F: Fn(A) -> G + 'a,
+        G: Fn(B) -> C + 'a + Clone,
     {
-        Self::apply(Self::apply(Self::pure(f), ma), mb)
+        Self::apply(Self::map(f, ma), mb)
     }
 }
 
@@ -40,7 +41,7 @@ pub mod curry {
         where
             Self: 'a,
             A: Clone,
-            F: Fn(A) -> B,
+            F: Fn(A) -> B + Clone,
         {
             curry(<Self as Api<'a>>::apply)(mf)
         }
@@ -53,14 +54,15 @@ pub mod curry {
             curry(<Self as Api<'a>>::lift1)(f)
         }
 
-        fn lift2<A, B, C, F>(
+        fn lift2<A, B, C, F, G>(
             f: F,
         ) -> Box<dyn FnOnce(Self::T<A>) -> Box<dyn FnOnce(Self::T<B>) -> Self::T<C> + 'a> + 'a>
         where
             Self: 'a,
             A: Clone,
             B: Clone,
-            F: Fn(A) -> Box<dyn Fn(B) -> C> + 'a,
+            F: Fn(A) -> G + Clone + 'a,
+            G: Fn(B) -> C + Clone + 'a,
         {
             curry3(<Self as Api<'a>>::lift2)(f)
         }
@@ -84,7 +86,7 @@ pub mod infix {
         fn apply<B, MAP>(self, mf: Self::T<MAP>) -> Self::T<B>
         where
             A: Clone,
-            MAP: Fn(A) -> B,
+            MAP: Fn(A) -> B + Clone,
             Self: Sized,
         {
             Self::hkp_to_self(Self::This::apply(

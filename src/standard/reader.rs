@@ -41,7 +41,7 @@ impl<'e, E: Copy, F: Applicative<'e> + 'e> Applicative<'e> for ReaderK<'e, E, F>
     fn apply<A, B, MAP>(mf: Self::T<MAP>, ma: Self::T<A>) -> Self::T<B>
     where
         A: Clone,
-        MAP: Fn(A) -> B,
+        MAP: Fn(A) -> B + Clone,
     {
         let Reader(vf, _) = mf;
         let Reader(va, _) = ma;
