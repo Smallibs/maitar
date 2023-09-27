@@ -4,11 +4,12 @@
  * Copyright (c) 2023 Didier Plaindoux
  */
 
-pub fn uncurry<'a, A, B, C, F>(f: F) -> impl Fn(A, B) -> C + 'a
+pub fn uncurry<'a, A, B, C, F, G>(f: F) -> impl Fn(A, B) -> C + 'a
 where
-    F: Fn(A) -> Box<dyn Fn(B) -> C> + 'a,
+    F: Fn(A) -> G + 'a,
+    G: Fn(B) -> C,
 {
-    Box::new(move |a, b| f(a)(b))
+    move |a, b| f(a)(b)
 }
 
 pub fn curry<'a, A, B, C, F>(f: F) -> impl FnOnce(A) -> Box<dyn FnOnce(B) -> C + 'a>

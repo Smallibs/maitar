@@ -6,4 +6,5 @@
 
 pub mod functions;
 pub mod hkp;
+pub mod morphism;
 pub mod transform;
