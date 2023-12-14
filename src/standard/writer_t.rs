@@ -12,12 +12,12 @@ use crate::specs::monad::Monad;
 use crate::specs::monoid::Monoid;
 use std::marker::PhantomData;
 
-pub struct Writer<'a, E: 'a, F: HKP<'a>, A: 'a>(F::T<(E, A)>);
+pub struct WriterT<'a, E: 'a, F: HKP<'a>, A: 'a>(F::T<(E, A)>);
 
 pub struct WriterK<'a, E, F: HKP<'a>>(PhantomData<&'a E>, PhantomData<F>);
 
 impl<'a, E, F: HKP<'a>> HKP<'a> for WriterK<'a, E, F> {
-    type T<B: 'a> = Writer<'a, E, F, B>;
+    type T<B: 'a> = WriterT<'a, E, F, B>;
 }
 
 impl<'a, E, F: Functor<'a>> Functor<'a> for WriterK<'a, E, F> {
@@ -25,14 +25,14 @@ impl<'a, E, F: Functor<'a>> Functor<'a> for WriterK<'a, E, F> {
     where
         MAP: Fn(A) -> B + 'a,
     {
-        let Writer(va) = ma;
-        Writer(F::map(move |(e, a)| (e, f(a)), va))
+        let WriterT(va) = ma;
+        WriterT(F::map(move |(e, a)| (e, f(a)), va))
     }
 }
 
 impl<'a, E: Monoid<T = E> + Copy, F: Applicative<'a> + 'a> Applicative<'a> for WriterK<'a, E, F> {
     fn pure<A>(a: A) -> Self::T<A> {
-        Writer(F::pure((E::neutral(), a)))
+        WriterT(F::pure((E::neutral(), a)))
     }
 
     fn apply<A, B, M>(mf: Self::T<M>, ma: Self::T<A>) -> Self::T<B>
@@ -40,7 +40,7 @@ impl<'a, E: Monoid<T = E> + Copy, F: Applicative<'a> + 'a> Applicative<'a> for W
         A: Clone,
         M: Fn(A) -> B + 'a + Clone,
     {
-        Writer(F::lift2(
+        WriterT(F::lift2(
             |(t, f)| move |(u, g)| (E::compose(t, u), f(g)),
             mf.0,
             ma.0,
@@ -53,7 +53,7 @@ impl<'a, E: Monoid<T = E> + Copy, F: Bind<'a> + 'a> Bind<'a> for WriterK<'a, E, 
     where
         BIND: Fn(A) -> Self::T<B> + 'a,
     {
-        Writer(F::bind(ma.0, move |(x, t)| {
+        WriterT(F::bind(ma.0, move |(x, t)| {
             F::map(move |(y, u)| (E::compose(x, y), u), mf(t).0)
         }))
     }

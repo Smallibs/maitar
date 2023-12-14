@@ -7,7 +7,7 @@
 pub mod either;
 pub mod identity;
 pub mod option;
-pub mod reader;
+pub mod reader_t;
 pub mod result;
 pub mod vec;
-pub mod writer;
+pub mod writer_t;
