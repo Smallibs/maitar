@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Didier Plaindoux
+ * Copyright (c) 2023-2024 Didier Plaindoux
  */
 
 use crate::specs::bind::Bind;

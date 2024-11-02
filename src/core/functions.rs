@@ -1,13 +1,13 @@
 /*
  * MIT License
  *
- * Copyright (c) 2023 Didier Plaindoux
+ * Copyright (c) 2023-2024 Didier Plaindoux
  */
 
-pub fn uncurry<'a, A, B, C, F, G>(f: F) -> impl Fn(A, B) -> C + 'a
+pub fn uncurry<'a, A, B, C, F, G>(f: F) -> impl FnOnce(A, B) -> C + 'a
 where
-    F: Fn(A) -> G + 'a,
-    G: Fn(B) -> C,
+    F: FnOnce(A) -> G + 'a,
+    G: FnOnce(B) -> C,
 {
     move |a, b| f(a)(b)
 }
